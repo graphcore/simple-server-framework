@@ -1,0 +1,66 @@
+# Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+ssf_version: 1.0.0
+
+application:
+  id: simple-test
+  name: Test API
+  desc: A very simple test API
+  version: 1.0
+  module: my_application.py
+  trace: True
+  artifacts: []
+
+  dependencies:
+    python: ~
+
+  package:
+    inclusions: []
+    exclusions: []
+
+  ipus: 0
+  startup_timeout: 60
+
+endpoints:
+
+  - id: Test1
+    version: 1
+    desc: This is my simple application interface
+    custom: ~
+
+    inputs:
+
+      - id: x
+        type: Integer
+        desc: An integer value
+
+    outputs:
+
+      - id: requests
+        type: Integer
+        desc: Count of requests
+
+      - id: x_times_1000
+        type: Integer
+        desc: Input value x times 1000
+
+
+  - id: Test1
+    version: 2
+    desc: This is a newer version of my simple application interface
+    custom: ~
+
+    inputs:
+
+      - id: x
+        type: Integer
+        desc: An integer value
+
+    outputs:
+
+      - id: requests
+        type: Integer
+        desc: Count of requests
+
+      - id: x_times_1000
+        type: Integer
+        desc: Input value x times 1000

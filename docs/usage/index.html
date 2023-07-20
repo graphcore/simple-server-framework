@@ -1,0 +1,857 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+
+
+
+
+        <link rel="prev" href="../model_format/">
+
+
+        <link rel="next" href="../all_options/">
+
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+
+
+
+        <title>CLI Usage - Simple Server Framework (SSF)</title>
+
+
+
+      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
+
+
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
+
+
+
+
+
+
+
+
+
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+
+
+
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+
+
+
+
+
+
+  </head>
+
+
+
+
+
+
+
+
+
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+
+
+
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+
+
+        <a href="#cli-usage" class="md-skip">
+          Skip to content
+        </a>
+
+    </div>
+    <div data-md-component="announce">
+
+    </div>
+
+
+
+
+
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Simple Server Framework (SSF)" class="md-header__button md-logo" aria-label="Simple Server Framework (SSF)" data-md-component="logo">
+
+
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Simple Server Framework (SSF)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+
+              CLI Usage
+
+          </span>
+        </div>
+      </div>
+    </div>
+
+
+        <form class="md-header__option" data-md-component="palette">
+
+
+
+
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+
+
+
+
+
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+
+
+        </form>
+
+
+
+
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <div class="md-header__source">
+        <a href="https://github.com/graphcore/simple-server-framework" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+
+  </nav>
+
+</header>
+
+    <div class="md-container" data-md-component="container">
+
+
+
+
+
+
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+
+
+
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Simple Server Framework (SSF)" class="md-nav__button md-logo" aria-label="Simple Server Framework (SSF)" data-md-component="logo">
+
+
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Simple Server Framework (SSF)
+  </label>
+
+    <div class="md-nav__source">
+      <a href="https://github.com/graphcore/simple-server-framework" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+
+  <ul class="md-nav__list" data-md-scrollfix>
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        What is SSF?
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        Quick start
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../walkthrough/" class="md-nav__link">
+        Walkthrough
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../model_format/" class="md-nav__link">
+        Model format
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item md-nav__item--active">
+
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+
+
+
+
+
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          CLI Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+
+      <a href="./" class="md-nav__link md-nav__link--active">
+        CLI Usage
+      </a>
+
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+
+
+
+
+
+
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+
+        <li class="md-nav__item">
+  <a href="#ssf-init" class="md-nav__link">
+    SSF init
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-build" class="md-nav__link">
+    SSF build
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-run" class="md-nav__link">
+    SSF run
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-package" class="md-nav__link">
+    SSF package
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-publish" class="md-nav__link">
+    SSF publish
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-deploy" class="md-nav__link">
+    SSF deploy
+  </a>
+
+    <nav class="md-nav" aria-label="SSF deploy">
+      <ul class="md-nav__list">
+
+          <li class="md-nav__item">
+  <a href="#deployment-to-gcore" class="md-nav__link">
+    Deployment to Gcore
+  </a>
+
+</li>
+
+      </ul>
+    </nav>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-test" class="md-nav__link">
+    SSF test
+  </a>
+
+</li>
+
+    </ul>
+
+</nav>
+
+    </li>
+
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../all_options/" class="md-nav__link">
+        Options
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../features/" class="md-nav__link">
+        Features
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../advanced/" class="md-nav__link">
+        Advanced
+      </a>
+    </li>
+
+
+
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+
+
+
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+
+
+
+
+
+
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+
+        <li class="md-nav__item">
+  <a href="#ssf-init" class="md-nav__link">
+    SSF init
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-build" class="md-nav__link">
+    SSF build
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-run" class="md-nav__link">
+    SSF run
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-package" class="md-nav__link">
+    SSF package
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-publish" class="md-nav__link">
+    SSF publish
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-deploy" class="md-nav__link">
+    SSF deploy
+  </a>
+
+    <nav class="md-nav" aria-label="SSF deploy">
+      <ul class="md-nav__list">
+
+          <li class="md-nav__item">
+  <a href="#deployment-to-gcore" class="md-nav__link">
+    Deployment to Gcore
+  </a>
+
+</li>
+
+      </ul>
+    </nav>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#ssf-test" class="md-nav__link">
+    SSF test
+  </a>
+
+</li>
+
+    </ul>
+
+</nav>
+                  </div>
+                </div>
+              </div>
+
+
+
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+
+
+
+
+
+
+
+<!-- Copyright (c) 2023 Graphcore Ltd. All rights reserved. -->
+<h1 id="cli-usage">CLI usage</h1>
+<p>The SSF command line interface consists of the following main commands
+and a <code>--config</code> path.</p>
+<ul>
+<li><a href="#ssf-init">init</a></li>
+<li><a href="#ssf-build">build</a></li>
+<li><a href="#ssf-run">run</a></li>
+<li><a href="#ssf-package">package</a></li>
+<li><a href="#ssf-publish">publish</a></li>
+<li><a href="#ssf-deploy">deploy</a></li>
+<li><a href="#ssf-test">test</a></li>
+</ul>
+<p>These commands can be used with various <a href="../all_options/">options</a>.</p>
+<p>The format is:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>&lt;ssf-config-path&gt;<span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</span></code></pre></div>
+Multiple commands can be used within the same line:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>&lt;ssf-config-path&gt;<span class="w"> </span>COMMAND1<span class="w"> </span>COMMAND2<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</span></code></pre></div></p>
+<p>(Note: If <code>--config</code> is not defined, SSF will look for an <code>ssf_config.yaml</code> file in the current directory.)</p>
+<p>All ssf commands will return a status code defined in <code>ssf.results</code>:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">RESULT_OK</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">RESULT_BAD_ARG</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">RESULT_FAIL</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">RESULT_SKIPPED</span> <span class="o">=</span> <span class="mi">255</span>
+</span></code></pre></div>
+If any command returns <code>RESULT_SKIPPED</code> (e.g. due to unsatisfied system requirements) then gc-ssf will return immediately and subsequents steps are cancelled. This can be useful in test pipelines where a test may then be marked as skipped instead of fail.</p>
+<h2 id="ssf-init">SSF init</h2>
+<p><code>init</code> is designed to set up a clean environment before you build.
+This will:</p>
+<ul>
+<li>Remove endpoint artifacts generated by a previous <code>build</code></li>
+<li>Remove custom <code>artifacts</code> (if any) specified in <a href="../model_format/#create-an-ssf-config">ssf_config.yaml</a></li>
+<li>Clone a repo if using a remote model repository</li>
+</ul>
+<p>For example:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Example 1: remove all generated endpoint files related to ssf_config.yaml</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>init
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Example 2: remove all generated endpoint files related to ssf_config.yaml</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># also clone a fresh copy of the remote repo git@github.com:graphcore/simple-server-framework.git</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span><span class="s1">&#39;git@github.com:graphcore/simple-server-framework.git|examples/simple/ssf_config.yaml&#39;</span><span class="w"> </span>init
+</span></code></pre></div></p>
+<h2 id="ssf-build">SSF build</h2>
+<p>This shows how to issue <code>build</code> for an example.
+This step will generate the API endpoint files.
+It will also instantiate the application and run the <a href="../model_format/#create-an-application-interface"><code>build</code></a> method.
+You can use this to write custom preparation steps to run offline, for example  compilation, weights download,
+cache generation, and so on.</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>build
+</span></code></pre></div>
+Example output:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$ gc-ssf --config examples/simple/ssf_config.yaml build
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>2023-03-28 16:40:20,893 644580     INFO      ==== Build ==== (build.py:15)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>2023-03-28 16:40:20,893 644580     INFO      &gt; Generate_endpoints (build.py:17)
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>2023-03-28 16:40:20,898 644580     INFO      &gt; Load application (build.py:20)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>2023-03-28 16:40:20,898 644580     INFO      Creating application (application.py:95)
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>2023-03-28 16:40:20,898 644580     INFO      Checking application dependencies (application.py:97)
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>2023-03-28 16:40:20,898 644580     INFO      Loading simple_test application from /home/examples/simple/my_application.py with module id simple_test (application.py:103)
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>2023-03-28 16:40:20,898 644580     INFO      loading module /home/examples/simple/my_application.py with module name simple_test (utils.py:110)
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>2023-03-28 16:40:20,898 644580     INFO      Create MyApplication instance (my_application.py:34)
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>2023-03-28 16:40:20,898 644580     INFO      &gt; Build application (build.py:23)
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>2023-03-28 16:40:20,898 644580     INFO      Changed directory to /home/examples/simple (utils.py:123)
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>2023-03-28 16:40:20,898 644580     INFO      MyApp build (my_application.py:14)
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>2023-03-28 16:40:20,898 644580     INFO      Returned directory to /home (utils.py:127)
+</span></code></pre></div></p>
+<p>The endpoint files are auto-generated in the current working directory:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ssf_simple_test_endpoint_0_fastapi.py
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>ssf_simple_test_endpoint_1_fastapi.py
+</span></code></pre></div>
+<p>NOTE:
+Use <code>init</code> to remove build artifacts.</p>
+<h2 id="ssf-run">SSF run</h2>
+<p>Start running the server.
+It is assumed the endpoints already exist (=&gt; issue <code>build</code> first.)</p>
+<p>This shows how to issue <code>run</code> for an example.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>run
+</span></code></pre></div>
+<p>Example output:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>$ gc-ssf --config examples/simple/ssf_config.yaml run
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>2023-03-28 16:41:29,813 644749     INFO      ==== Run ==== (run.py:17)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>2023-03-28 16:41:29,813 644749     INFO      &gt; Starting fastapi runtime with examples/simple/ssf_config.yaml (run.py:28)
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>2023-03-28 16:41:29,813 644749     INFO      &gt; Running Uvicorn (ssf_run.py:24)
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>2023-03-28 16:41:29,989 644749     INFO      &gt; Running FastAPI server (server.py:27)
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>2023-03-28 16:41:29,995 644749     INFO      &gt; Test API : A very simple test API (server.py:38)
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>2023-03-28 16:41:29,996 644749     INFO      &gt; Creating FastAPI applications (server.py:43)
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>2023-03-28 16:41:29,996 644749     INFO      &gt; Creating FastAPI instance (server.py:50)
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>2023-03-28 16:41:29,997 644749     INFO      &gt; Loading endpoints for simple_test (server.py:79)
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>2023-03-28 16:41:29,997 644749     INFO      &gt; Loading simple_test endpoint from /home/ssf_simple_test_endpoint_0_fastapi.py with module id simple_test_endpoint_0 (server.py:85)
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>2023-03-28 16:41:29,997 644749     INFO      loading module /home/ssf_simple_test_endpoint_0_fastapi.py with module name simple_test_endpoint_0 (utils.py:110)
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>2023-03-28 16:41:29,998 644749     INFO      Loaded /home/ssf_simple_test_endpoint_0_fastapi.py for simple_test endpoint (ssf_simple_test_endpoint_0_fastapi.py:33)
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>2023-03-28 16:41:30,000 644749     INFO      &gt; Loading simple_test endpoint from /home/ssf_simple_test_endpoint_1_fastapi.py with module id simple_test_endpoint_1 (server.py:85)
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>2023-03-28 16:41:30,000 644749     INFO      loading module /home/ssf_simple_test_endpoint_1_fastapi.py with module name simple_test_endpoint_1 (utils.py:110)
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>2023-03-28 16:41:30,002 644749     INFO      Loaded /home/ssf_simple_test_endpoint_1_fastapi.py for simple_test endpoint (ssf_simple_test_endpoint_1_fastapi.py:33)
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>2023-03-28 16:41:30,004 644749     WARNING   API key has not been specified, endpoints are not secured. (server.py:94)
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>2023-03-28 16:41:30,005 644749     INFO      Started server process [644749] (server.py:74)
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>2023-03-28 16:41:30,005 644749     INFO      Waiting for application startup. (on.py:48)
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>2023-03-28 16:41:30,005 644749     INFO      &gt; Startup (server.py:106)
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>2023-03-28 16:41:30,011 644815     INFO      Dispatcher started for simple_test [644749-&gt;644815] (dispatcher.py:59)
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>2023-03-28 16:41:30,011 644815     INFO      &gt; Getting user application instance (dispatcher.py:64)
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>2023-03-28 16:41:30,011 644815     INFO      Creating application (application.py:95)
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>2023-03-28 16:41:30,011 644815     INFO      Checking application dependencies (application.py:97)
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>2023-03-28 16:41:30,011 644815     INFO      Loading simple_test application from /home/examples/simple/my_application.py with module id simple_test (application.py:103)
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>2023-03-28 16:41:30,011 644815     INFO      loading module /home/examples/simple/my_application.py with module name simple_test (utils.py:110)
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>2023-03-28 16:41:30,012 644815     INFO      Create MyApplication instance (my_application.py:34)
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>2023-03-28 16:41:30,012 644815     INFO      instance=&lt;simple_test.MyApplication object at 0x7fc0503ab250&gt; (dispatcher.py:66)
+</span><span id="__span-8-28"><a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>2023-03-28 16:41:30,012 644815     INFO      &gt; Initialising user application instance (dispatcher.py:69)
+</span><span id="__span-8-29"><a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>2023-03-28 16:41:30,012 644815     INFO      MyApp initialise (my_application.py:18)
+</span><span id="__span-8-30"><a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a>2023-03-28 16:41:31,012 644749     INFO      Application startup complete. (on.py:62)
+</span><span id="__span-8-31"><a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a>2023-03-28 16:41:31,013 644749     INFO      Uvicorn running on http://0.0.0.0:8100 (Press CTRL+C to quit) (server.py:217)
+</span></code></pre></div>
+<p>It is valid to combine build and run in one step:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>build<span class="w"> </span>run
+</span></code></pre></div>
+<h2 id="ssf-package">SSF package</h2>
+<p>This shows how to issue <code>package</code> for an example.
+It is assumed the endpoints already exist (=&gt; issue <code>build</code> first.)</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>package
+</span></code></pre></div>
+<p>This will pull resources into a local directory (<code>.package</code>) and build a docker image with name <code>&lt;application_id&gt;:latest</code></p>
+<p>Example output:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>$ gc-ssf --config examples/simple/ssf_config.yaml package
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>2023-03-28 21:03:52,071 1307287    INFO      ==== Package ==== (package.py:15)
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>2023-03-28 21:03:52,071 1307287    INFO      &gt; Packaging simple_test to /home/.package (package.py:30)
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>2023-03-28 21:03:52,072 1307287    INFO      &gt; Package SSF from /home/ssf (package.py:70)
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>2023-03-28 21:03:52,077 1307287    INFO      &gt; Package Application from /home/examples/simple (package.py:86)
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>2023-03-28 21:03:52,077 1307287    INFO      &gt; Package Endpoint files (package.py:90)
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>2023-03-28 21:03:52,078 1307287    INFO      &gt; Generate docker image (package.py:126)
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>2023-03-28 21:03:52,114 1307287    INFO      [Docker image build] Sending build context to Docker daemon  103.9kB (utils.py:73)
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>2023-03-28 21:03:52,198 1307287    INFO      [Docker image build] Step 1/14 : FROM graphcore/pytorch:3.1.0-ubuntu-20.
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>[...]
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>2023-03-28 21:03:52,226 1307287    INFO      [Docker image build]  ---&gt; Using cache (utils.py:73)
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>2023-03-28 21:03:52,226 1307287    INFO      [Docker image build]  ---&gt; 1a39476a9bb4 (utils.py:73)
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>2023-03-28 21:03:52,226 1307287    INFO      [Docker image build] Step 14/14 : CMD cd src &amp;&amp; ./run.sh (utils.py:73)
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>2023-03-28 21:03:52,227 1307287    INFO      [Docker image build]  ---&gt; Using cache (utils.py:73)
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>2023-03-28 21:03:52,227 1307287    INFO      [Docker image build]  ---&gt; ed9945bd6e3a (utils.py:73)
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>2023-03-28 21:03:52,228 1307287    INFO      [Docker image build] Successfully built ed9945bd6e3a (utils.py:73)
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>2023-03-28 21:03:52,230 1307287    INFO      [Docker image build] Successfully tagged simple_test:latest (utils.py:73)
+</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>2023-03-28 21:03:52,237 1307287    INFO      &gt; Run: &#39;docker run --rm -d --network host --name simple_test simple_test:latest&#39; (package.py:137)
+</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>2023-03-28 21:03:52,237 1307287    INFO      &gt; Logs: &#39;docker logs simple_test&#39; (package.py:138)
+</span><span id="__span-11-20"><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>2023-03-28 21:03:52,237 1307287    INFO      &gt; Stop: &#39;docker stop simple_test&#39; (package.py:139)
+</span></code></pre></div>
+<p>It is valid to combine build and package in one step:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>build<span class="w"> </span>package
+</span></code></pre></div>
+<h2 id="ssf-publish">SSF publish</h2>
+<p>This shows how to issue 'publish' for an example.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>publish
+</span></code></pre></div>
+<p>This will push the most recent packaged docker image to a docker server (default Docker Hub).</p>
+<p>This assumes the docker server is already logged in, but if a docker username and password are provided, then these will be used to login before pushing.
+A specific server may also be specified if required using <code>--container-server</code>.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>--docker-username<span class="w"> </span>&lt;username&gt;<span class="w"> </span>--docker-password<span class="w"> </span>&lt;password&gt;<span class="w"> </span>publish
+</span></code></pre></div>
+<p>Example output:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>gc-ssf --config examples/simple/ssf_config.yaml publish
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>2023-04-11 17:41:36,382 1273566    INFO      &gt; Config examples/simple/ssf_config.yaml (cli.py:334)
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>2023-04-11 17:41:36,387 1273566    INFO      &gt; ==== Publish ==== (publish.py:15)
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>2023-04-11 17:41:37,212 1273566    INFO      &gt; Docker push user/myapp:simple_test-1.0-latest to DockerHub (publish.py:43)
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>2023-04-11 17:41:37,252 1273566    INFO      [Push user/myapp:simple_test-1.0-latest] The push refers to repository [docker.io/user/myapp] (utils.py:193)
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>2023-04-11 17:41:37,509 1273566    INFO      [Push user/myapp:simple_test-1.0-latest] 0f277cce0197: Preparing (utils.py:193)
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>[...]
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>2023-04-11 17:41:40,249 1273566    INFO      [Push user/myapp:simple_test-1.0-latest] simple_test-1.0-latest: digest:
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>sha256:cb...0d6 size: 5996 (utils.py:193)
+</span></code></pre></div>
+<p>It is assumed the package already exist (=&gt; issue 'package' first.)</p>
+<p>It is valid to combine package and publish in one step:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>package<span class="w"> </span>publish
+</span></code></pre></div>
+<h2 id="ssf-deploy">SSF deploy</h2>
+<p>This shows how to issue 'deploy' for an example.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>deploy
+</span></code></pre></div></p>
+<p>It is assumed the image already exists on Docker hub, two possibilities:</p>
+<ul>
+<li>You have packaged it yourself and used <code>publish</code> first, then use the option <code>--deploy-package</code> (see <a href="../walkthrough/#example-1">example 1</a>)</li>
+<li>You use the <a href="https://hub.docker.com/r/graphcore/simple-server-framework">public pre-build SSF</a> image (see <a href="../walkthrough/#example-2">example 2</a>)</li>
+</ul>
+<p>It is valid to combine publish and deploy in one step:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>publish<span class="w"> </span>deploy
+</span></code></pre></div>
+<h3 id="deployment-to-gcore">Deployment to Gcore</h3>
+<p>For Gcore the deployment commands are passed using SSH. So the required options will be:</p>
+<ul>
+<li><code>--deploy-platform</code> (Gcore)</li>
+<li><code>--deploy-gcore-target-address</code>: The Gcore VM IP address to SSH</li>
+<li><code>--deploy-gcore-target-username</code>: The Gcore VM username to SSH (by default VMs use <code>ubuntu</code>)</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w">  </span>--deploy-platform<span class="w"> </span>Gcore<span class="w"> </span>--deploy-gcore-target-address<span class="w"> </span>&lt;ipaddr&gt;<span class="w"> </span>--deploy-gcore-target-username<span class="w"> </span>&lt;username&gt;<span class="w"> </span>deploy
+</span></code></pre></div>
+<p>For example:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>gc-ssf<span class="w"> </span>deploy<span class="w"> </span>--config<span class="w"> </span>ssf_config.yaml<span class="w"> </span>--deploy-platform<span class="w"> </span>Gcore<span class="w"> </span>--port<span class="w"> </span><span class="m">8100</span><span class="w"> </span>--deploy-gcore-target-address<span class="w"> </span><span class="m">123</span>.456.789.0<span class="w"> </span>--deploy-gcore-target-username<span class="w"> </span>ubuntu<span class="w"> </span>--docker-username<span class="w"> </span>dockerUser<span class="w"> </span>--docker-password<span class="w"> </span>my-docker-token<span class="w"> </span>--add-ssh-key<span class="w"> </span>KEY_ENV_VARIABLE<span class="w"> </span>--deploy-package
+</span></code></pre></div></p>
+<p>This will deploy the most recently published image to the target platform (Gcore).</p>
+<p>The config application ID is used for the deployment name unless <code>--deploy-name</code> is used to override it.</p>
+<p>This will create a new deployment or update an existing deployment if one already exists.</p>
+<p>The target must have already been created.</p>
+<p>Use <code>--add-ssh-key</code> to add an SSH key via environment variable if required.</p>
+<p>See <code>gc-ssf --help</code> for other <code>--deploy-</code> arguments.</p>
+<p>Some SSF options, such as <code>--port</code>, <code>--key</code>, <code>--replicate-application</code> and <code>--replicate-server</code> are passed through to the deployment with the image SSF_OPTIONS feature to configure the deployed instance(s).</p>
+<h2 id="ssf-test">SSF test</h2>
+<p>This shows how to issue 'test' for an example.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span><span class="nb">test</span>
+</span></code></pre></div>
+<p>This will start and test the current packaged Docker image (run <code>gc-ssf package</code> first.)\</p>
+<p>2 types of test are issued:</p>
+<ul>
+<li>Built-in SSF tests (always run): Testing that the server runs normally (for instance accessing root endpoint)</li>
+<li>Custom tests (optional): Users can define their own tests to run with this command, see the section <a href="../advanced/#create-a-test-interface-for-your-application">"Create a test interface for your application"</a>.</li>
+</ul>
+<p>If the current system can not satisfy the application dependency (for example the required Poplar version), then the test will be skipped and a warning will be logged.</p>
+<p>If IPUs are required then remember to set 'ipus' in the SSF config.</p>
+<p>Example output:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>$ gc-ssf --config examples/simple/ssf_config.yaml test
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>2023-05-04 10:33:04,800 1578140    INFO      &gt; Config examples/simple/ssf_config.yaml (cli.py:404)
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>2023-05-04 10:33:04,805 1578140    INFO      &gt; ==== Test ==== (test.py:12)
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>2023-05-04 10:33:04,805 1578140    INFO      &gt; Start simple-test user/repo:simple-test-1.0-latest (test.py:263)
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>2023-05-04 10:33:04,871 1578140    INFO      SSF_OPTIONS=-p 8100 --key test_key (test.py:65)
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>2023-05-04 10:33:05,118 1578140    INFO      &gt; Wait simple-test (test.py:276)
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>2023-05-04 10:33:10,202 1578140    INFO      &gt; Subtest Check root endpoint (test.py:279)
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>2023-05-04 10:33:10,223 1578140    INFO      &gt; Subtest Check security logout (test.py:286)
+</span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>2023-05-04 10:33:10,243 1578140    INFO      &gt; Subtest Check security forbidden (test.py:293)
+</span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>2023-05-04 10:33:10,260 1578140    INFO      &gt; Subtest Check security accepted (test.py:300)
+</span><span id="__span-22-11"><a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>2023-05-04 10:33:10,277 1578140    INFO      OK 4 KO 0 (test.py:307)
+</span><span id="__span-22-12"><a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>2023-05-04 10:33:10,324 1578140    INFO      &gt; Stop simple-test (test.py:314)
+</span><span id="__span-22-13"><a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>2023-05-04 10:33:20,559 1578140    INFO      &gt; Remove simple-test (test.py:316)
+</span></code></pre></div>
+<p>It is assumed the package already exist (=&gt; issue 'package' first.)</p>
+<p>It is valid to combine package and test in one step:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>gc-ssf<span class="w"> </span>--config<span class="w"> </span>examples/simple/ssf_config.yaml<span class="w"> </span>package<span class="w"> </span><span class="nb">test</span>
+</span></code></pre></div>
+<p>If the test passes, then <code>gc-ssf test</code> will return <code>RESULT_OK</code> (0).</p>
+<p>If the test is skipped (for example, due to configuration) then <code>gc-ssf test</code> will return <code>RESULT_SKIPPED</code> (255).</p>
+<p>If the test fails, then an exception will be thrown.<br />
+Example:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>ValueError: simple-test failed testing OK:7 KO:1
+</span></code></pre></div></p>
+
+
+
+
+
+
+              </article>
+            </div>
+
+
+        </div>
+
+      </main>
+
+        <footer class="md-footer">
+
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+
+
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+
+</div>
+
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.select", "content.code.copy"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+
+
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
+
+
+  </body>
+</html>

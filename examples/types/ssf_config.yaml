@@ -1,0 +1,229 @@
+# Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+ssf_version: 1.0.0
+
+application:
+  id: types-test
+  name: Test API
+  desc: A very simple test API with new types
+  version: 1.0
+  module: my_application.py
+  trace: True
+  artifacts: []
+
+  dependencies:
+    python: numpy
+
+  package:
+    inclusions: []
+    exclusions: []
+
+  ipus: 0
+  startup_timeout: 60
+
+endpoints:
+
+  - id: TestTypes
+    version: 1
+    desc: Simple application interface with type support
+    custom: ~
+    http_param_format: json
+
+    inputs:
+
+      - id: x_strings_list
+        type: ListString
+        desc: A list of strings
+
+      - id: x_ints_list
+        type: ListInteger
+        desc: A list of integers
+
+      - id: x_floats_list
+        type: ListFloat
+        desc: A list of floating point values
+
+      - id: x_bools_list
+        type: ListBoolean
+        desc: A list of booleans
+
+      - id: x_bool_only
+        type: Boolean
+        desc: A single true/false value
+
+      - id: x_int_only
+        type: Integer
+        desc: A single integer
+
+      - id: x_list_any
+        type: ListAny
+        desc: Returns same list
+
+    outputs:
+
+      - id: y_strings_list
+        type: ListString
+        desc: Returned list of strings with extra string at the end
+
+      - id: y_ints_list
+        type: ListInteger
+        desc: Returned list of integers where y=(x+5)
+
+      - id: y_floats_list
+        type: ListFloat
+        desc: Returned list of floats where y=(pi*x^2)
+
+      - id: y_bools_list
+        type: ListBoolean
+        desc: Returned list of booleans where y=!(x)
+
+      - id: y_bool_only
+        type: Boolean
+        desc: Returned Boolean with expected value True from y=isinstance(x, bool)
+
+      - id: y_int_only
+        type: Integer
+        desc: Returned integer where y=x+1
+
+      - id: y_list_any
+        type: ListAny
+        desc: Returns same list
+
+
+  - id: TestFiles
+    version: 1
+    desc: Simple application interface to send and return image file as bytes
+    custom: ~
+    http_param_format: query
+
+    inputs:
+
+      - id: tempfile
+        type: TempFile
+        desc: Temporary image file
+
+    outputs:
+
+      - id: out_image
+        type: PngImageBytes
+        desc: Returns image bytes object.
+
+
+  - id: TestFilesWithSingleValueTypes
+    version: 1
+    desc: Simple application interface to send image file with lists and return image with lists in headers
+    custom: ~
+    http_param_format: query
+
+    inputs:
+
+      - id: tempfile
+        type: TempFile
+        desc: Temporary image file
+
+      - id: x_bool_only
+        type: Boolean
+        desc: A single true/false value
+
+      - id: x_int_only
+        type: Integer
+        desc: A single integer
+
+    outputs:
+
+      - id: out_image
+        type: PngImageBytes
+        desc: Returns image bytes object.
+
+      - id: y_bool_only
+        type: Boolean
+        desc: Returned Boolean with expected value True from y=isinstance(x, bool)
+
+      - id: y_int_only
+        type: Integer
+        desc: Returned integer where y=x+1
+
+
+  - id: TestFilesWithListTypes
+    version: 1
+    desc: Simple application interface to send image file with single values and return image with values in headers
+    custom: ~
+    http_param_format: query
+
+    inputs:
+
+      - id: tempfile
+        type: TempFile
+        desc: Temporary image file
+
+      - id: x_strings_list
+        type: ListString
+        desc: A list of strings
+
+      - id: x_floats_list
+        type: ListFloat
+        desc: A list of floating point values
+
+    outputs:
+
+      - id: out_image
+        type: PngImageBytes
+        desc: Returns image bytes object.
+
+      - id: y_strings_list
+        type: ListString
+        desc: Returned list of strings with extra string at the end
+
+      - id: y_floats_list
+        type: ListFloat
+        desc: Returned list of floats where y=(pi*x^2)
+
+
+  - id: TestFilesWithMixtureOfTypes
+    version: 1
+    desc: Simple application interface to send image file with single values and return image with values in headers
+    custom: ~
+    # should automatically pick up input_format as 'query'
+
+    inputs:
+
+      - id: tempfile
+        type: TempFile
+        desc: Temporary image file
+
+      - id: x_strings_list
+        type: ListString
+        desc: A list of strings
+
+      - id: x_floats_list
+        type: ListFloat
+        desc: A list of floating point values
+
+      - id: x_bool_only
+        type: Boolean
+        desc: A single true/false value
+
+      - id: x_int_only
+        type: Integer
+        desc: A single integer
+
+    outputs:
+
+      - id: out_image
+        type: PngImageBytes
+        desc: Returns image bytes object.
+
+      - id: y_strings_list
+        type: ListString
+        desc: Returned list of strings with extra string at the end
+
+      - id: y_floats_list
+        type: ListFloat
+        desc: Returned list of floats where y=(pi*x^2)
+
+      - id: y_bool_only
+        type: Boolean
+        desc: Returned Boolean with expected value True from y=isinstance(x, bool)
+
+      - id: y_int_only
+        type: Integer
+        desc: Returned integer where y=x+1

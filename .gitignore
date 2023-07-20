@@ -1,0 +1,13 @@
+__pycache__/
+ssf*.log
+dist
+*.package
+.*env
+*.tar.gz
+ssf_*_endpoint_[0-9]_fastapi.py
+ssf-*-endpoint-[0-9]-fastapi.py
+ssf.egg-info
+*.repo
+*.ssf_config
+*-boot.sh
+optionfile

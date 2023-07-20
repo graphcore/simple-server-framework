@@ -1,0 +1,47 @@
+# Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+ssf_version: 1.0.0
+
+application:
+  id: qa_api
+  name: Question Answering API
+  desc: A very simple QA API
+  version: 1.0
+  module: my_app.py
+  ipus: 2
+  trace: True
+  artifacts: []
+  dependencies:
+    python: git+https://github.com/huggingface/optimum-graphcore.git@97c11c3
+
+  package:
+    inclusions: [exe_cache/]
+    exclusions: []
+    docker:
+        baseimage: "graphcore/pytorch:latest"
+
+endpoints:
+
+  - id: QA
+    version: 1
+    desc: Question answering model
+    custom: ~
+
+    inputs:
+
+      - id: context
+        type: String
+        desc: Context
+
+      - id: question
+        type: String
+        desc: Question
+
+    outputs:
+
+      - id: answer
+        type: String
+        desc: Answer in the text
+
+      - id: score
+        type: Float
+        desc: Probability score

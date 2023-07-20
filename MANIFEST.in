@@ -1,0 +1,13 @@
+include ssf/*.template
+include ssf/requirements.txt
+include ssf/fastapi_runtime/requirements.txt
+
+include LICENSE
+
+prune __pycache__ 
+prune */__pycache__ 
+prune linting
+prune tests
+prune integration_tests
+
+
