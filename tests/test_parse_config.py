@@ -71,6 +71,36 @@ def test_parse_config():
             "config_file": "ssf/ssf_config.yaml",
             "checkout": "release",
         },
+        # ** From Paperspace model storage **
+        {
+            "input": "gradient-model:a23erwfwrerj|ssf_config.yaml",
+            "repo": "gradient-model",
+            "repo_dir": "a23erwfwrerj",
+            "repo_name": None,
+            "config": f"{GRADIENT_MODELS_ROOT}/ssf_config.yaml",
+            "config_file": "ssf_config.yaml",
+            "checkout": None,
+        },
+        # ** From remote public repository (using "https://github.com" form) with checkout **
+        {
+            "input": "https://github.com/graphcore/my_application.git@release|ssf/ssf_config.yaml",
+            "repo": "https://github.com/graphcore/my_application.git",
+            "repo_dir": REPO_ROOT,
+            "repo_name": "my_application",
+            "config": f"{REPO_ROOT}/my_application/ssf/ssf_config.yaml",
+            "config_file": "ssf/ssf_config.yaml",
+            "checkout": "release",
+        },
+        # ** From remote repository (using "ssh://github.com" form) with checkout **
+        {
+            "input": "ssh://me@my_org/my_application@release|ssf/ssf_config.yaml",
+            "repo": "ssh://me@my_org/my_application",
+            "repo_dir": REPO_ROOT,
+            "repo_name": "my_application",
+            "config": f"{REPO_ROOT}/my_application/ssf/ssf_config.yaml",
+            "config_file": "ssf/ssf_config.yaml",
+            "checkout": "release",
+        },
     ]
 
     for e in examples:

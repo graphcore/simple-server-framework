@@ -1,33 +1,41 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
 import logging
 import os
-import sys
+import time
+from contextlib import asynccontextmanager
+from threading import Thread
 
+import server_health
+import server_security
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from prometheus_fastapi_instrumentator import Instrumentator
-from contextlib import asynccontextmanager
 
-from config import settings
-from dispatcher import Applications
-import server_security
-import server_health
-from ssf.fastapi_runtime.common import SSFException
-from ssf.load_config import ConfigGenerator
-from ssf.utils import load_module
-from threading import Thread
-import time
+from ssf.common_runtime.callbacks import notify_error_callback
+
+from ssf.common_runtime.config import settings
+
+from ssf.common_runtime.dispatcher import Applications
+
+from ssf.fastapi_runtime.server_metrics import (
+    RequestLatencyProviderMiddleware,
+    add_prometheus_instrumentator,
+)
+
 from ssf.logger import init_global_logging
+from ssf.results import SSFExceptionFrameworkResourceError
+from ssf.utils import API_FASTAPI, load_module, ascii_to_object
 
 init_global_logging()
 
-
 logger = logging.getLogger()
 logger.info(f"> Running FastAPI server")
-logger.debug(f"settings={settings}")
 
-# Load a single config file (=> single application endpoint).
-ssf_config = ConfigGenerator(settings.ssf_config_file).load(api="fastapi")
+ssf_config = ascii_to_object(os.getenv("SSF_CONFIG"))
+ssf_result_file = os.getenv("SSF_RESULT_FILE")
+settings.initialise(ssf_config, ssf_result_file)
+
+logger.info(f"> With settings {vars(settings)}")
+logger.debug(f"(From ssf_config {ssf_config})")
 
 application_id = ssf_config.application.id
 application_name = ssf_config.application.name
@@ -41,10 +49,15 @@ application_terms_of_service = ssf_config.application.terms_of_service
 logger.info(f"> {application_name} : {application_desc}")
 logger.debug(f"ssf_config={ssf_config}")
 
+
 # Create the applications managed group.
 # A single application (=> single dispatcher) from our single ssf_config.
 logger.info(f"> Creating FastAPI applications")
-applications = Applications(ssf_config_list=[ssf_config])
+applications = Applications(
+    settings=settings,
+    ssf_config_list=[ssf_config],
+    notify_error_callback=notify_error_callback,
+)
 logger.debug(f"applications={applications}")
 
 
@@ -67,30 +80,32 @@ async def _lifespan(app: FastAPI):
 
     try:
         logger.info("> Lifespan start")
-        logger.info("Lifespan applications.start()...")
+        logger.info("Lifespan start : start application (threaded)")
         startup_thread = Thread(target=applications.start)
         startup_thread.start()
     except asyncio.CancelledError:
         pass
     except KeyboardInterrupt:
         pass
+
     try:
         yield
     except asyncio.CancelledError:
         pass
     except KeyboardInterrupt:
         pass
+
     try:
         logger.info("> Lifespan stop")
-        logger.info("Lifespan applications.stop()...")
         if startup_thread.is_alive():
-            logger.warning("Startup thread still alive, joining...")
             time.sleep(2)
-            applications.stop()
+            logger.info("Lifespan stop : joining startup thread")
             startup_thread.join()
-        else:
+            logger.info("Lifespan stop : stop application")
             applications.stop()
-        logger.info("Lifespan applications.stop()...done")
+        else:
+            logger.info("Lifespan stop : stop application")
+            applications.stop()
     except asyncio.CancelledError:
         pass
     except KeyboardInterrupt:
@@ -116,6 +131,10 @@ app = FastAPI(
     # contact
 )
 
+logger.info(
+    f"Prometheus client is {'enabled' if not settings.prometheus_disabled else 'disabled'}."
+)
+
 # TODO:
 # What other middleware should we enable by default?
 # e.g.:
@@ -125,6 +144,7 @@ app = FastAPI(
 # app.add_middleware(TrustedHostMiddleware, allowed_hosts=["example.com", "*.example.com"])
 # app.add_middleware(HTTPSRedirectMiddleware)
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=settings.allow_origin_regex,
@@ -133,6 +153,17 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+app.add_middleware(RequestLatencyProviderMiddleware)
+
+# prometheus instrumentator should be added as last middleware
+if not settings.prometheus_disabled:
+    add_prometheus_instrumentator(
+        app,
+        settings.prometheus_port,
+        settings.prometheus_endpoint,
+        settings.prometheus_buckets,
+    )
 
 # Load the application endpoints
 logger.info(f"> Loading endpoints for {application_id}")
@@ -144,8 +175,8 @@ for endpoint in ssf_config.endpoints:
         f"> Loading {application_id} endpoint from {endpoint_file} with module id {module_id}"
     )
     if not os.path.exists(endpoint_file):
-        raise SSFException(
-            "FastAPI interface has not been prepared. Run SSF client `build` step first."
+        raise SSFExceptionFrameworkResourceError(
+            f"Run `clean` and `build` steps to regenerate endpoint resources."
         )
 
     endpoint_module = load_module(endpoint_file, module_id)

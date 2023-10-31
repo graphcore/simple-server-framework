@@ -27,9 +27,9 @@ class MyApplication(SSFApplicationInterface):
         logger.info("MyApp shutdown")
         return RESULT_OK
 
-    def is_healthy(self) -> bool:
-        logger.info("MyApp check health")
-        return True
+    def watchdog(self) -> int:
+        logger.info("MyApp watchdog")
+        return RESULT_OK
 
 
 def create_ssf_application_instance() -> SSFApplicationInterface:

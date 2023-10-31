@@ -2,14 +2,21 @@
 import logging
 import requests
 
-from ssf.application import SSFApplicationInterface, SSFApplicationTestInterface
+from ssf.application import (
+    SSFApplicationInterface,
+    SSFApplicationTestInterface,
+    SSFConfig,
+)
 from ssf.results import *
 
 logger = logging.getLogger()
 
 
 class MyApplication(SSFApplicationInterface):
-    def __init__(self):
+    def __init__(self, ssf_config: SSFConfig):
+        id = ssf_config.config_dict["application"]["id"]
+        version = ssf_config.config_dict["application"]["version"]
+        logger.info(f"MyApp {id} {version}")
         self.requests = 0
 
     def build(self) -> int:
@@ -31,19 +38,9 @@ class MyApplication(SSFApplicationInterface):
         logger.info("MyApp shutdown")
         return RESULT_OK
 
-    def is_healthy(self) -> bool:
-        logger.info("MyApp check health")
-        return True
-
-
-# NOTE:
-# This can be called multiple times (with separate processes)
-# if running with multiple workers (replicas). Be careful that
-# your application can handle multiple parallel worker processes.
-# (for example, that there is no conflict for file I/O).
-def create_ssf_application_instance() -> SSFApplicationInterface:
-    logger.info("Create MyApplication instance")
-    return MyApplication()
+    def watchdog(self) -> int:
+        logger.info("MyApp watchdog")
+        return RESULT_OK
 
 
 class MyApplicationTest(SSFApplicationTestInterface):
@@ -95,8 +92,3 @@ class MyApplicationTest(SSFApplicationTestInterface):
     def end(self, session, ipaddr: str) -> int:
         logger.info("MyApp test end")
         return 0
-
-
-def create_ssf_application_test_instance(ssf_config) -> SSFApplicationTestInterface:
-    logger.info("Create MyApplication test instance")
-    return MyApplicationTest()

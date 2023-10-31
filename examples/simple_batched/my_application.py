@@ -35,6 +35,10 @@ class MyApplication(SSFApplicationInterface):
         logger.info("MyApp shutdown")
         return RESULT_OK
 
+    def watchdog(self) -> int:
+        logger.info("MyApp watchdog")
+        return RESULT_OK
+
 
 # NOTE:
 # This can be called multiple times (with separate processes)

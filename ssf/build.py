@@ -19,10 +19,9 @@ def build(ssf_config: SSFConfig):
     logger.info("> ==== Build ====")
 
     if not poplar_version_ok(ssf_config):
-        logger.warning(
-            f"Skip due to missing or unsupported Poplar version - needs {get_poplar_requirement(ssf_config)}"
+        raise SSFExceptionUnmetRequirement(
+            f"Missing or unsupported Poplar version - needs {get_poplar_requirement(ssf_config)}"
         )
-        return RESULT_SKIPPED
 
     logger.info("> Generate_endpoints")
     generate_endpoints(ssf_config)
@@ -40,7 +39,6 @@ def build(ssf_config: SSFConfig):
     # Run build from application module file directory
     with temporary_cwd(app_file_dir):
         ret = application.build()
-        # Application instance will not be used further, delete it
         application.shutdown()
 
     clear_application(ssf_config)

@@ -29,11 +29,12 @@ class MyApplication(SSFApplicationInterface):
         logger.info("MyApp shutdown")
         return RESULT_OK
 
-    def is_healthy(self) -> bool:
-        logger.info("MyApp health check")
+    def watchdog(self) -> int:
+        logger.info("MyApp watchdog")
         file = open("status.yaml", "r")
         healthy = yaml.safe_load(file)["healthy"]
-        ret = True if healthy else False
+        ret = RESULT_OK if healthy else RESULT_APPLICATION_ERROR
+        logger.info(f"MyApp returning {ret} from watchdog()")
         return ret
 
 

@@ -25,7 +25,6 @@ endpoints:
   - id: TestTypes
     version: 1
     desc: Simple application interface with type support
-    custom: ~
     http_param_format: json
 
     inputs:
@@ -33,30 +32,37 @@ endpoints:
       - id: x_strings_list
         type: ListString
         desc: A list of strings
+        example: a,b,c
 
       - id: x_ints_list
         type: ListInteger
         desc: A list of integers
+        example: 1,2,3
 
       - id: x_floats_list
         type: ListFloat
         desc: A list of floating point values
+        example: 1.2,2.2,3.3
 
       - id: x_bools_list
         type: ListBoolean
         desc: A list of booleans
+        example: False,True,False
 
       - id: x_bool_only
         type: Boolean
         desc: A single true/false value
+        example: False
 
       - id: x_int_only
         type: Integer
         desc: A single integer
+        example: 1
 
       - id: x_list_any
         type: ListAny
         desc: Returns same list
+        example: hello,1,1.1,False
 
     outputs:
 
@@ -92,7 +98,6 @@ endpoints:
   - id: TestFiles
     version: 1
     desc: Simple application interface to send and return image file as bytes
-    custom: ~
     http_param_format: query
 
     inputs:
@@ -111,7 +116,6 @@ endpoints:
   - id: TestFilesWithSingleValueTypes
     version: 1
     desc: Simple application interface to send image file with lists and return image with lists in headers
-    custom: ~
     http_param_format: query
 
     inputs:
@@ -146,7 +150,6 @@ endpoints:
   - id: TestFilesWithListTypes
     version: 1
     desc: Simple application interface to send image file with single values and return image with values in headers
-    custom: ~
     http_param_format: query
 
     inputs:
@@ -181,7 +184,6 @@ endpoints:
   - id: TestFilesWithMixtureOfTypes
     version: 1
     desc: Simple application interface to send image file with single values and return image with values in headers
-    custom: ~
     # should automatically pick up input_format as 'query'
 
     inputs:

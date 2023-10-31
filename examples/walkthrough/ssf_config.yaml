@@ -9,12 +9,12 @@ application:
   module: my_app.py
   ipus: 2
   trace: True
-  artifacts: []
+  artifacts: [exe_cache/**/*]
   dependencies:
     python: git+https://github.com/huggingface/optimum-graphcore.git@97c11c3
 
   package:
-    inclusions: [exe_cache/]
+    inclusions: [exe_cache/**/*]
     exclusions: []
     docker:
         baseimage: "graphcore/pytorch:latest"
@@ -31,10 +31,12 @@ endpoints:
       - id: context
         type: String
         desc: Context
+        example: "The large green ball bounced down the twisty road"
 
       - id: question
         type: String
         desc: Question
+        example: "What colour is the ball?"
 
     outputs:
 

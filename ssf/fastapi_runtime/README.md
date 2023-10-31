@@ -3,15 +3,9 @@
 
 Code to run SSF server with FastAPI.
 
-
 - `ssf_run.py` : Entry point (starts uvicorn)
 - `server.py` : Main server app
 - `server_security.py` : Conditional security endpoints and handlers
-- `dispatcher.py` : The endpoint dispatch interface and associated queue(s)
-- `config.py` : Defines settings (from environment/.env)
-- `common.py` : Some support pieces required by app FastAPI endpoints
-- `requirements.txt` : Required packages to run the FastAPI server runtime
-
 
 NOTE:
 The uvicorn server is started with N workers using the SSF --replicate option.
@@ -20,8 +14,6 @@ Each server (replicate) will have its own dispatcher/queue (for each registered 
 The dispatcher calls through the application interface to create/acquire a user application interface instance at start up.
 The user application interface instance must be unique and independent per dispatcher;  this provides a mechanism for scaling
 the same end-point to fully utilise a system.
-
-
 
 ## Environment variables
 

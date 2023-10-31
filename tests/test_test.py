@@ -5,7 +5,7 @@ from ssf.results import *
 
 
 @pytest.mark.fast
-def test_test():
+def test_test(port):
     result, _, _ = run_subprocess(
         [
             "gc-ssf",
@@ -13,6 +13,8 @@ def test_test():
             "examples/simple/ssf_config.yaml",
             "--stdout-log-level",
             "DEBUG",
+            "--port",
+            str(port),
             "init",
             "build",
             "package",

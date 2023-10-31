@@ -213,9 +213,9 @@ class MNISTAPI(SSFApplicationInterface):
         logger.info("MNIST API shutdown")
         return RESULT_OK
 
-    def is_healthy(self) -> bool:
-        logger.info("MNIST API check health")
-        return True
+    def watchdog(self) -> int:
+        logger.info("MNIST API watchdog")
+        return RESULT_OK
 
 
 # NOTE:

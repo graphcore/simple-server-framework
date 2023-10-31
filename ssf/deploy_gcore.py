@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 from ssf.config import SSFConfig
 from ssf.publish import docker_login_command, docker_logout_command
-from ssf.results import *
+from ssf.results import RESULT_OK, SSFExceptionGcoreDeploymentError
 from ssf.ssh import add_ssh_host
 from ssf.utils import logged_subprocess
 
@@ -17,7 +17,7 @@ def deploy(
     package_tag: str,
     name: str,
     ssf_options: List[str],
-    add_env: List[Tuple[str, str]],
+    add_env: List[Tuple[str, str, str]],
     total_application_ipus: int,
 ):
     logger.info("> ==== Deploy Gcore ====")
@@ -135,14 +135,13 @@ def deploy(
                 "Execute boot file", cmds, piped_input="".join(boot).encode()
             )
         if exit_code:
-            logger.error(f"Execute file {boot_file} at {target} errored {exit_code}")
-            raise ValueError(
-                f"Failed to execute boot file {boot_file} at {target} {exit_code}"
+            raise SSFExceptionGcoreDeploymentError(
+                f"Execute boot file {boot_file} at {target} errored ({exit_code})"
             )
 
-        logger.info(f"Executed file {boot_file} at {target} {exit_code}")
+        logger.info(f"Executed file {boot_file} at {target}")
         logger.info(f'> Started {package_tag} as "{name}" at {target}')
     else:
-        logger.warning("No deploment target specified")
+        raise SSFExceptionGcoreDeploymentError(f"Target address must be specified")
 
     return RESULT_OK

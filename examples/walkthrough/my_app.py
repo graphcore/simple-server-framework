@@ -4,7 +4,7 @@ from optimum.graphcore import pipeline
 import logging
 from ssf.application import SSFApplicationInterface
 from ssf.utils import get_ipu_count
-from ssf.results import RESULT_OK
+from ssf.results import RESULT_OK, RESULT_APPLICATION_ERROR
 
 logger = logging.getLogger()
 # --8<-- [end:imports]
@@ -57,17 +57,9 @@ class MyApplication(SSFApplicationInterface):
         return RESULT_OK
 
     # --8<-- [end:shutdown]
-    # --8<-- [start:is_healthy]
-    def is_healthy(self) -> bool:
+    # --8<-- [start:watchdog]
+    def watchdog(self) -> int:
         result = self.question_answerer(self.dummy_inputs_dict)
-        return result["answer"] == "Rob"
+        return RESULT_OK if result["answer"] == "Rob" else RESULT_APPLICATION_ERROR
 
-
-# --8<-- [end:is_healthy]
-
-# --8<-- [start:builder]
-def create_ssf_application_instance() -> SSFApplicationInterface:
-    return MyApplication()
-
-
-# --8<-- [end:builder]
+    # --8<-- [end:watchdog]

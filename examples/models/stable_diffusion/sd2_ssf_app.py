@@ -38,11 +38,7 @@ def compile_or_load_model_exe(pipe, seed_generator):
 class StableDiffusion2API(SSFApplicationInterface):
     def __init__(self):
         import torch
-        from optimum.graphcore.diffusers import (
-            get_default_ipu_configs,
-            INFERENCE_ENGINES_TO_MODEL_NAMES,
-            IPUStableDiffusionPipeline,
-        )
+        from optimum.graphcore.diffusers import IPUStableDiffusionPipeline
         from diffusers import DPMSolverMultistepScheduler
 
         self._pipe = None
@@ -52,9 +48,6 @@ class StableDiffusion2API(SSFApplicationInterface):
             8  # Max IPUs to run 'high performance' version, will run if available.
         )
 
-        engine = "stable-diffusion-512-v2-1"
-        executable_cache_dir = f"./exe_cache/"
-
         # Check for IPUs here in init, to prep required IPU configs.
         self.req_ipus = max_ipus
         if not check_available_ipus(max_ipus):
@@ -63,30 +56,14 @@ class StableDiffusion2API(SSFApplicationInterface):
             )
             self.req_ipus = min_ipus
             if not check_available_ipus(min_ipus):
-                logger.error(f"{min_ipus} IPUs not available. Exiting.")
-                return RESULT_SKIPPED
-
-        (
-            unet_ipu_config,
-            text_encoder_ipu_config,
-            vae_ipu_config,
-            safety_checker_ipu_config,
-        ) = get_default_ipu_configs(
-            engine,
-            height=512,
-            width=512,
-            n_ipu=self.req_ipus,
-            executable_cache_dir=executable_cache_dir,
-        )
+                raise SSFExceptionUnmetRequirement(f"{min_ipus} IPUs not available. ")
 
         self._pipe = IPUStableDiffusionPipeline.from_pretrained(
-            INFERENCE_ENGINES_TO_MODEL_NAMES[engine],
+            "stabilityai/stable-diffusion-2-1-base",
             revision="fp16",
             torch_dtype=torch.float16,
-            unet_ipu_config=unet_ipu_config,
-            text_encoder_ipu_config=text_encoder_ipu_config,
-            vae_ipu_config=vae_ipu_config,
-            safety_checker_ipu_config=safety_checker_ipu_config,
+            requires_safety_checker=False,
+            n_ipu=self.req_ipus,
         )
 
         self._pipe.scheduler = DPMSolverMultistepScheduler.from_config(
@@ -101,8 +78,7 @@ class StableDiffusion2API(SSFApplicationInterface):
         logger.info(f"Stable Diffusion 2 API build - compile to generate executable")
 
         if not check_available_ipus(self.req_ipus):
-            logger.error(f"{self.req_ipus} IPUs not available.")
-            return RESULT_SKIPPED
+            raise SSFExceptionUnmetRequirement(f"{self.req_ipus} IPUs not available.")
 
         logger.info(f"{self.req_ipus} IPUs available for model. Building...")
         return compile_or_load_model_exe(self._pipe, self.seed_gen)
@@ -111,8 +87,7 @@ class StableDiffusion2API(SSFApplicationInterface):
         logger.info("Stable Diffusion 2 API startup - trigger load executable")
 
         if not check_available_ipus(self.req_ipus):
-            logger.error(f"{self.req_ipus} IPUs not available.")
-            return RESULT_SKIPPED
+            raise SSFExceptionUnmetRequirement(f"{self.req_ipus} IPUs not available.")
 
         logger.info(f"{self.req_ipus} IPUs available for model. Loading...")
         return compile_or_load_model_exe(self._pipe, self.seed_gen)
@@ -148,9 +123,9 @@ class StableDiffusion2API(SSFApplicationInterface):
         logger.info("Stable Diffusion 2 API shutdown")
         return RESULT_OK
 
-    def is_healthy(self) -> bool:
-        logger.info("Stable Diffusion 2 API check health")
-        return True
+    def watchdog(self) -> int:
+        logger.info("Stable Diffusion 2 API watchdog")
+        return RESULT_OK
 
 
 # NOTE:

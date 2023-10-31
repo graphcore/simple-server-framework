@@ -14,14 +14,18 @@ from ssf.config import (
     PackageDescription,
     EndpointParam,
 )
+from ssf.results import SSFExceptionApplicationConfigError
+
+from ssf.utils import get_endpoints_gen_module_path, set_dict
 
 logger = logging.getLogger("ssf")
 
 
 def validate_id(id, debug_name):
     if " " in id:
-        logger.error(f"Invalid config file: {debug_name} should not contain spaces")
-        raise ValueError
+        raise SSFExceptionApplicationConfigError(
+            f"Invalid config file: {debug_name} should not contain spaces"
+        )
     return
 
 
@@ -38,30 +42,55 @@ class ConfigGenerator:
     None
     """
 
-    def __init__(self, config: Union[str, Dict], yaml: bool = True) -> None:
+    def __init__(
+        self, config: Union[str, Dict], yaml: bool = True, modify_config: str = None
+    ) -> None:
 
         if yaml:
             try:
                 assert isinstance(config, str)
             except AssertionError as e:
-                logger.error(
+                raise SSFExceptionApplicationConfigError(
                     f"`yaml` set to True when loading config, expected `config` argument to be [str] path to YAML file. Got {type(config)}."
-                )
-                raise e
+                ) from e
 
-            ssf_config = yaml_safe_load(open(config))
+            try:
+                ssf_config = yaml_safe_load(open(config))
+            except Exception as e:
+                raise SSFExceptionApplicationConfigError(
+                    f"Failure loading {config}."
+                ) from e
+
             config_file = config
         else:
             try:
                 assert isinstance(config, Dict)
             except AssertionError as e:
-                logger.error(
+                raise SSFExceptionApplicationConfigError(
                     f"`yaml` set to False when loading config, expected `config` argument to be [Dict] config dict. Got {type(config)}."
-                )
-                raise e
+                ) from e
 
             ssf_config = config
             config_file = None
+
+        if modify_config is not None:
+            mclist = modify_config.split(";")
+            failures = 0
+            for mc in mclist:
+                logger.info(f"Modify config: {mc}")
+                field_value = mc.split("=")
+                if len(field_value) != 2:
+                    failures += 1
+                    logger.error(
+                        f"Modify config failure with '{mc}', requires '<field>=<value>'"
+                    )
+                elif not set_dict(ssf_config, field_value[0], field_value[1]):
+                    failures += 1
+                    logger.error(f"Config field can not be set with `{mc}`")
+            if failures > 0:
+                raise SSFExceptionApplicationConfigError(
+                    f"Failed to modify config with `{mclist}`"
+                )
 
         self.config_dict = ssf_config
         self.__expand_dict(self.config_dict)
@@ -91,6 +120,7 @@ class ConfigGenerator:
 
         config.ssf_version = self.__setter("ssf_version", config.ssf_version)
         config.config_file = self.config_file
+        config.config_dict = self.config_dict
         config.args = args
         config.api = api
 
@@ -160,9 +190,12 @@ class ConfigGenerator:
             if args:
                 application.total_ipus = (
                     application.ipus
-                    * args.replicate_server
+                    * args.fastapi_replicate_server
                     * args.replicate_application
                 )
+            application.syspaths = self.__setter(
+                "syspaths", application.syspaths, level
+            )
 
             # Assume application module (file) as required if not self packaging/publishing
             application.file = self.__setter(
@@ -269,7 +302,7 @@ class ConfigGenerator:
                 endpoint.file = os.path.join(
                     os.getcwd(), f"ssf-{application.id}-endpoint-{idx}-{api}.py"
                 )
-                endpoint.generate = True
+                endpoint.generate = os.path.exists(get_endpoints_gen_module_path(api))
 
             # Currently the default API is FastAPI, behaviours for different frameworks can be mapped in future
             # If no option is set, the default is None - as this behaviour dynamically changes when endpoint is generated.
@@ -304,8 +337,9 @@ class ConfigGenerator:
                     "type", None, i_level, assert_required=True
                 )
                 endpoint_param.description = self.__setter(
-                    "desc", f"Endpoint input {iidx}", i_level
+                    "desc", f"Endpoint {param_field} {iidx}", i_level
                 )
+                endpoint_param.example = self.__setter("example", None, i_level)
 
                 # ... more endpoint parameter fields can be assigned here (e.g. fields inside config["endpoints"][idx]["input"/"output"][idx])
 
@@ -333,14 +367,13 @@ class ConfigGenerator:
             try:
                 assert key in d
             except AssertionError as e:
-                logger.error(
-                    f"Required field '{key}' not found in config YAML file.", e
-                )
-                raise e
+                raise SSFExceptionApplicationConfigError(
+                    f"Required field '{key}' not found in config YAML file."
+                ) from e
 
         if key not in d:
             logger.info(
-                f"{key} not specified {'in ' + '.'.join([str(level) for level in level]) if level else ''}. Defaulting to {var}"
+                f"{'.'.join([str(k) for k in (level + [key])])} not specified. Defaulting to '{var}'"
             )
             return var
         else:

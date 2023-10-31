@@ -4,9 +4,10 @@ ssf_version: 1.0.0
 application:
   id: cwd-complex-test
   name: Test CWD
-  desc: Test CWD for user entry-points
+  desc: Test CWD for user entry-points (complex arrangement, including relative and custom imports)
   version: 1.0
   module: ../../complex_app/my_application.py
+  syspaths: ["../../complex_core"]
   trace: True
   artifacts: ["../../complex_app/generated/*"]
 
@@ -14,8 +15,8 @@ application:
     python: ~
 
   package:
-    inclusions: ["../../complex_app/generated/*"]
-    exclusions: ["../../complex_app/generated/b"]
+    inclusions: ["*.py", "../../complex_core/**", "../../complex_app/**"]
+    exclusions: ["../../**/__pycache__/**", "../../complex_app/generated/b"]
 
   ipus: 0
   startup_timeout: 60

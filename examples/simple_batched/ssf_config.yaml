@@ -30,6 +30,7 @@ endpoints:
       - id: x
         type: Integer
         desc: An integer value
+        example: 100
 
     outputs:
 

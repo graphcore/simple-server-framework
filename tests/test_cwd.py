@@ -7,6 +7,9 @@ from copy import deepcopy
 from utils import run_subprocess
 from ssf.results import *
 
+from app_usecases.cwd.complex.config.description import DESCRIPTION
+from app_usecases.cwd.complex_core.core import CORE
+
 
 def paths_from_log(stdout):
     log_keys = {
@@ -19,7 +22,7 @@ def paths_from_log(stdout):
         "startup CWD:": None,
         "request CWD:": None,
         "shutdown CWD:": None,
-        "is_healthy CWD:": None,
+        "watchdog CWD:": None,
     }
 
     regular = deepcopy(log_keys)
@@ -38,7 +41,7 @@ def paths_from_log(stdout):
 
 
 @pytest.mark.fast
-def test_regular_cwd():
+def test_regular_cwd(port):
     result, stdout, stderr = run_subprocess(
         [
             "gc-ssf",
@@ -46,6 +49,8 @@ def test_regular_cwd():
             "tests/app_usecases/cwd/regular/ssf_config.yaml",
             "--stdout-log-level",
             "DEBUG",
+            "--port",
+            str(port),
             "init",
             "build",
             "package",
@@ -92,7 +97,7 @@ def test_regular_cwd():
 
 
 @pytest.mark.fast
-def test_complex_cwd():
+def test_complex_cwd(port):
     result, stdout, _ = run_subprocess(
         [
             "gc-ssf",
@@ -100,6 +105,8 @@ def test_complex_cwd():
             "tests/app_usecases/cwd/complex/config/ssf_config.yaml",
             "--stdout-log-level",
             "DEBUG",
+            "--port",
+            str(port),
             "init",
             "build",
             "package",
@@ -147,3 +154,16 @@ def test_complex_cwd():
     assert not os.path.isfile(
         ".package/cwd-complex-test/src/app/complex_app/generated/b"
     )  # (Excluded)
+    assert not os.path.isdir(
+        ".package/cwd-complex-test/src/app/complex_app/__pycache__"
+    )  # (Excluded)
+    assert not os.path.isdir(
+        ".package/cwd-complex-test/src/app/complex/config/__pycache__"
+    )  # (Excluded)
+
+    # Check for specific strings (including substring) in any line of stdout
+    def string_in_stdout(s):
+        return any(s in line for line in stdout)
+
+    assert string_in_stdout(DESCRIPTION)
+    assert string_in_stdout(CORE)

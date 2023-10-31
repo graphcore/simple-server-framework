@@ -1,0 +1,48 @@
+# Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+ssf_version: 0.0.1
+
+application:
+  id: modify-config-test
+  name: Test API
+  desc: A very simple test API
+  version: 1.0
+  module: modify_config.py
+  ipus: 0
+  trace: True
+  artifacts: []
+
+testtypes:
+  t_int: 1
+  t_float: 1.0
+  t_str: "1.0"
+  t_bool: False
+
+testlist:
+  - X
+  - Y
+  - Z
+
+testlist_dict:
+  - id: X
+    desc: X
+  - id: Y
+    desc: Y
+  - id: Z
+    desc: Z
+
+endpoints:
+
+  - id: Test1
+    version: 1
+    desc: This is my simple application interface
+    custom: ~
+
+    inputs:
+      - id: x
+        type: Integer
+        desc: An integer value
+
+    outputs:
+      - id: response
+        type: String
+        desc: ok

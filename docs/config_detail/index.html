@@ -1,0 +1,1028 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../model_format/">
+      
+      
+        <link rel="next" href="../usage/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+    
+    
+      
+        <title>Config Detail - Simple Server Framework (SSF)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.4b4a2bd9.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ssf-config" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Simple Server Framework (SSF)" class="md-header__button md-logo" aria-label="Simple Server Framework (SSF)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Simple Server Framework (SSF)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Config Detail
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/graphcore/simple-server-framework" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Simple Server Framework (SSF)" class="md-nav__button md-logo" aria-label="Simple Server Framework (SSF)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Simple Server Framework (SSF)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/graphcore/simple-server-framework" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is SSF?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Walkthrough
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model_format/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Model Format
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Config Detail
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI Usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../all_options/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI Options
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result_codes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Result Codes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grpc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gRPC
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Advanced
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../history/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    History
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<!-- Copyright (c) 2023 Graphcore Ltd. All rights reserved. -->
+<h1 id="ssf-config">SSF Config</h1>
+<p>The SSF Config is a YAML format file.<br />
+A detailed description of all the supported YAML fields is provided below.<br />
+Required fields are flagged with 'Y'.  </p>
+<p>For a quick overview of the SSF Config file and how it works with the application interface, see <a href="../model_format/">model format</a>.  </p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ssf_version</code></td>
+<td>Y</td>
+<td>1.0.0</td>
+<td>The version of SSF for which this config was written and tested</td>
+</tr>
+<tr>
+<td><code>application</code></td>
+<td>Y</td>
+<td></td>
+<td>Application information - see following section</td>
+</tr>
+<tr>
+<td><strong>application:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>..id</code></td>
+<td>Y</td>
+<td>my_app</td>
+<td>A unique identifier without spaces or special characters</td>
+</tr>
+<tr>
+<td><code>..name</code></td>
+<td>Y</td>
+<td>My application</td>
+<td>The application name in human-readable format</td>
+</tr>
+<tr>
+<td><code>..desc</code></td>
+<td>Y</td>
+<td>This is my application</td>
+<td>A description of the application in human-readable format</td>
+</tr>
+<tr>
+<td><code>..version</code></td>
+<td>Y</td>
+<td>1.0</td>
+<td>The version number for this application</td>
+</tr>
+<tr>
+<td><code>..module</code></td>
+<td>Y</td>
+<td>my_application.py</td>
+<td>The Python module that provides the SSF application interface</td>
+</tr>
+<tr>
+<td><code>..license_name</code></td>
+<td>N</td>
+<td>CreativeML Open RAIL++-M License</td>
+<td>License type/name for the application (model or API)</td>
+</tr>
+<tr>
+<td><code>..license_url</code></td>
+<td>N</td>
+<td>https://my.co/my_app/LICENSE</td>
+<td>URL to the license for the application (model or API)</td>
+</tr>
+<tr>
+<td><code>..terms_of_service</code></td>
+<td>N</td>
+<td>https://my.co/my_app/TERMS</td>
+<td>URL to terms of service for the application (model or API)</td>
+</tr>
+<tr>
+<td><code>..ipus</code></td>
+<td>N</td>
+<td>4</td>
+<td>Minimum number of required IPUs (can be zero)</td>
+</tr>
+<tr>
+<td><code>..max_batch_size</code></td>
+<td>N</td>
+<td>1</td>
+<td>Maximum batch size supported ; see <a href="../features/#batching">batching</a></td>
+</tr>
+<tr>
+<td><code>..startup_timeout</code></td>
+<td>N</td>
+<td>60</td>
+<td>When testing, maximum time in seconds to wait for the application to be ready</td>
+</tr>
+<tr>
+<td><code>..artifacts</code></td>
+<td>N</td>
+<td>["weights.onnx", "exe_cache/*<em>/</em>"]</td>
+<td>List of 'globs' for files that are built when <code>build</code> is issued.<br />These are the files removed when <code>init</code> is issued</td>
+</tr>
+<tr>
+<td><code>..trace</code></td>
+<td>N</td>
+<td>True</td>
+<td>Enable endpoint logging</td>
+</tr>
+<tr>
+<td><code>..syspaths</code></td>
+<td>N</td>
+<td>["../my_model_src"]</td>
+<td>List of directories used to extend the Python sys.path (module search path)</td>
+</tr>
+<tr>
+<td><code>..dependencies</code></td>
+<td>N</td>
+<td></td>
+<td>Dependencies - see following section</td>
+</tr>
+<tr>
+<td><strong>application:dependencies:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>..python</code></td>
+<td>N</td>
+<td>requirements.txt</td>
+<td>Comma-separated list of Python libraries or a requirements file</td>
+</tr>
+<tr>
+<td><code>..poplar</code></td>
+<td>N</td>
+<td>["3.2.0", "3.3.0"]</td>
+<td>List of Poplar SDK versions that are compatible with the application</td>
+</tr>
+<tr>
+<td><code>..package</code></td>
+<td>N</td>
+<td></td>
+<td>Packaging - see following section</td>
+</tr>
+<tr>
+<td><strong>application:package:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>..inclusions</code></td>
+<td>N</td>
+<td>["weights.onnx", "exe_cache/*<em>/</em>"]</td>
+<td>List of 'globs' for application-specific files to include when packaging</td>
+</tr>
+<tr>
+<td><code>..exclusions</code></td>
+<td>N</td>
+<td>["intermediates/*<em>/</em>"]</td>
+<td>List of 'globs' for application-specific files to exclude when packaging</td>
+</tr>
+<tr>
+<td><code>..name</code></td>
+<td>N</td>
+<td>"my_app_bundle_v{{application.version}}.tar.gz"</td>
+<td>Filename for package tarball; if not specified then defaults to <code>&lt;application.name&gt;.&lt;application.version&gt;.tar.gz</code></td>
+</tr>
+<tr>
+<td><code>..tag</code></td>
+<td>N</td>
+<td>"my-repo/{{application.id}}:{{application.version}}"</td>
+<td>Tag for package image; if not specified then defaults to <code>&lt;application.name&gt;:&lt;application.version&gt;</code></td>
+</tr>
+<tr>
+<td><code>..docker</code></td>
+<td>N</td>
+<td></td>
+<td>Docker packaging - see following section</td>
+</tr>
+<tr>
+<td><strong>application:package:docker:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>..baseimage</code></td>
+<td>N</td>
+<td>"graphcore/pytorch:3.3.0-ubuntu-20.04"</td>
+<td>Use this specific base image when packaging the image (else the current SSF default will be used)</td>
+</tr>
+<tr>
+<td><code>..run</code></td>
+<td>N</td>
+<td>|-2<br />&nbsp;&nbsp;RUN apt-get install -y \<br />&nbsp;&nbsp;libsm6 libxext6 libboost-all-dev \<br />&nbsp;&nbsp;libjpeg-dev libtiff-dev libpng-dev</td>
+<td>Custom Dockerfile lines</td>
+</tr>
+<tr>
+<td><code>endpoints</code></td>
+<td>Y</td>
+<td></td>
+<td>List of end-points - see following section</td>
+</tr>
+<tr>
+<td><strong>endpoints:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>..id</code></td>
+<td>Y</td>
+<td>"MyAPI"</td>
+<td>An identifier without spaces or special characters. See <a href="#end-points">end-points</a></td>
+</tr>
+<tr>
+<td><code>..version</code></td>
+<td>N</td>
+<td>2</td>
+<td>The version number for this end-point  (defaults to 1)</td>
+</tr>
+<tr>
+<td><code>..desc</code></td>
+<td>N</td>
+<td>"This is my API end-point"</td>
+<td>A description of the end-point in human-readable format</td>
+</tr>
+<tr>
+<td><code>..http_param_format</code></td>
+<td>N</td>
+<td>query</td>
+<td>How to pass input data. More details in the section <a href="#requests-data-format">Requests data format</a>.</td>
+</tr>
+<tr>
+<td><code>..custom</code></td>
+<td>N</td>
+<td>"my_custom_endpoint.py"</td>
+<td>Use this Python file as the FastAPI endpoint implementation</td>
+</tr>
+<tr>
+<td><code>..inputs</code></td>
+<td>Y</td>
+<td></td>
+<td>List of inputs - see following section</td>
+</tr>
+<tr>
+<td><strong>endpoints:inputs:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>..id</code></td>
+<td>Y</td>
+<td>x</td>
+<td>A unique identifier without spaces or special characters</td>
+</tr>
+<tr>
+<td><code>..type</code></td>
+<td>Y</td>
+<td>Integer</td>
+<td>One of the <a href="#ssf-types">SSF defined types</a></td>
+</tr>
+<tr>
+<td><code>..desc</code></td>
+<td>N</td>
+<td>"An integer value"</td>
+<td>A description of the input in human-readable format</td>
+</tr>
+<tr>
+<td><code>..example</code></td>
+<td>N</td>
+<td>10</td>
+<td>An example value for this input</td>
+</tr>
+<tr>
+<td><code>..outputs</code></td>
+<td>Y</td>
+<td></td>
+<td>List of outputs - see following section</td>
+</tr>
+<tr>
+<td><strong>endpoints:outputs:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>..id</code></td>
+<td>Y</td>
+<td>x_times_1000</td>
+<td>A unique identifier without spaces or special characters</td>
+</tr>
+<tr>
+<td><code>..type</code></td>
+<td>Y</td>
+<td>Integer</td>
+<td>One of the <a href="#ssf-types">SSF defined types</a></td>
+</tr>
+<tr>
+<td><code>..desc</code></td>
+<td>N</td>
+<td>"Input value x times 1000"</td>
+<td>A description of the input in human-readable format</td>
+</tr>
+</tbody>
+</table>
+<h1 id="notes">Notes</h1>
+<h2 id="fastapi-end-points">FastAPI End-points</h2>
+<p>SSF will code-generate the server endpoint for the inputs/outputs and map it through the user application <code>request</code> function provided in the <code>SSFApplicationInterface</code> instance.  The endpoint code is automatically generated as:</p>
+<p><code>/v&lt;version&gt;/&lt;id&gt;</code></p>
+<p>For example, if <code>version</code> is <code>1</code> and <code>id</code> is <code>my_endpoint</code>, then it will generate:</p>
+<p><code>/v1/my_endpoint</code></p>
+<p>The combination of <code>version</code> and <code>id</code> must be unique for the application.  </p>
+<p>You can override the SSF code-generated endpoint and use your own module by specifying an endpoint file to import with the <code>custom</code> option.</p>
+<p>Parameter examples will be provided in the FastAPI generated OpenAPI definition and Swagger UI.<br />
+Parameter examples are supported only when using the FastAPI runtime and only for the basic types (<code>Integer</code>, <code>String</code>, <code>Float</code>, <code>Boolean</code>) and the list variants (<code>ListInteger</code>, <code>ListString</code>, <code>ListFloat</code>, <code>ListBoolean</code>).<br />
+The provided example values must be convertible to the parameter's declared type. Examples for List type parameters must be a comma-separated list of values; for example, given a parameter with type <code>ListInteger</code>: <code>example: 1,2,3</code>. </p>
+<h2 id="requests-data-format">Requests data format</h2>
+<p>SSF will declare inputs to be delivered in the request body parameters (json) by default.
+The exceptions are:</p>
+<ul>
+<li>If <code>http_param_format: query</code> is declared in the SSF config for the end point, or</li>
+<li>If the end-point includes a custom input type (such as TempFile).</li>
+</ul>
+<p>In these cases SFF will declare inputs to be delivered query parameters.
+You might use <code>http_param_format: query</code> in your SSF config to force query-in-request-params.
+Note that using query parameters for long inputs is not recommended,
+this can cause unwanted behaviour due to URL size https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers/417184#417184.</p>
+<h2 id="ssf-types">SSF types</h2>
+<h3 id="basic-types">Basic types</h3>
+<p>The following basic types are supported:</p>
+<table>
+<thead>
+<tr>
+<th>ssf_config.yml</th>
+<th>expected Python type (in app)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>String</code></td>
+<td><code>str</code></td>
+</tr>
+<tr>
+<td><code>Integer</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>Float</code></td>
+<td><code>float</code></td>
+</tr>
+<tr>
+<td><code>Boolean</code></td>
+<td><code>bool</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="list-types">List types:</h3>
+<p>List types can also be used as a single input/output:</p>
+<table>
+<thead>
+<tr>
+<th>ssf_config.yml</th>
+<th>expected Python type (in app)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ListString</code></td>
+<td><code>List[str]</code></td>
+</tr>
+<tr>
+<td><code>ListInteger</code></td>
+<td><code>List[int]</code></td>
+</tr>
+<tr>
+<td><code>ListFloat</code>:</td>
+<td><code>List[float]</code></td>
+</tr>
+<tr>
+<td><code>ListBoolean</code></td>
+<td><code>List[bool]</code></td>
+</tr>
+<tr>
+<td><code>ListAny</code><sup>*</sup></td>
+<td><code>list</code></td>
+</tr>
+</tbody>
+</table>
+<p><sup>*</sup>Experimental</p>
+<h3 id="input-file-handling">Input file handling</h3>
+<p>The following file handling types are supported as input:</p>
+<ul>
+<li><code>TempFile</code> (input only): This supports upload of file over interface, the file is saved in the server (temporary) and queued to the request as a filename.</li>
+</ul>
+<h3 id="specialised-types">Specialised types</h3>
+<ul>
+<li><code>PngImageBytes</code> (output only): This can be used to return a PNG image as content with media_type="image/png".</li>
+</ul>
+<h2 id="self-reference-expansion">Self-reference Expansion</h2>
+<ul>
+<li>The SSF config yaml file supports self-reference expansion for string entries; so, for our example, "{{application.id}}.tar.gz" would expand to "simple_test.tar.gz".</li>
+</ul>
+<h2 id="modifying-the-config-with-the-cli">Modifying the config with the CLI</h2>
+<ul>
+<li>The SSF config can be modified at run-time using the <code>--modify-config</code> CLI argument. Modifications are applied immediately after the yaml is loaded and before self-reference expansion. New fields are added as string type. Modifications to existing fields must match the existing type.</li>
+</ul>
+<h2 id="primary-application-context">Primary application context</h2>
+<ul>
+<li>The SSF config folder can be considered the primary application folder or context. All files, modules and directories should be specified relative to the SSF config folder. The current working directory will be set to the application module folder before SSF calls any of the application entry points (<code>build</code> or <code>request</code> etc.).</li>
+</ul>
+<h2 id="python-module-search-paths">Python module search paths</h2>
+<ul>
+<li>SSF adds the SSF config folder and application module folder (if it is different) to the Python module search path before the application module is loaded. The SSF config field <code>syspaths</code> can be used to add any additional directories. The search priority order is: <code>syspaths</code> first, in declared order, followed by the application module folder, followed by the SSF config folder last.</li>
+</ul>
+<h2 id="glob-declaration">Glob declaration</h2>
+<ul>
+<li>The SSF config settings that take 'globs' (artifacts, inclusions and exclusions) follow the behaviour documented here: <a href="https://docs.python.org/3.9/library/glob.html#glob.glob">glob documentation for Python 3.9</a>. The <code>recursive</code> argument is set to True, so the pattern <code>**</code> can be used and will match any files and zero or more directories.</li>
+</ul>
+<p>WARNINGS:</p>
+<ul>
+<li>The SSF config setting <code>artifacts</code> supports 'glob' matching of files that will be removed when the <code>init</code> command is issued. This feature is intended to remove only files that are generated by the <code>build</code> command, so that the next <code>build</code> will re-generate these files. SSF does not apply any checks or limits on the set of files matched for removal - take care that only the necessary expected files will be matched.</li>
+</ul>
+<h2 id="default-versions">Default versions</h2>
+<p>Use <code>gc-ssf --help</code> to find version information such as:</p>
+<ul>
+<li>Which SSF config versions are supported</li>
+<li>The default base image used for packaging</li>
+<li>The default SSF image used when deploying using a pre-built SSF image</li>
+</ul>
+<p>For example:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Simple Server Framework 1.1.0
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Supports application config ssf_version: 0.0.1 - 1.1.0
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Package default base image: graphcore/pytorch:3.3.0-ubuntu-20.04-20230703
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Deploy default SSF image: graphcore/simple-server-framework:1.1.0
+</span></code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.select", "content.code.copy"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
+  </body>
+</html>

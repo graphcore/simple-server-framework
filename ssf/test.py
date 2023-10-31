@@ -7,6 +7,9 @@ import time
 from ssf.application import get_application_test
 from ssf.package import get_package_name_and_tag
 from ssf.utils import (
+    API_FASTAPI,
+    API_GRPC,
+    get_supported_apis,
     poplar_version_ok,
     get_poplar_requirement,
     temporary_cwd,
@@ -15,6 +18,7 @@ from ssf.utils import (
 import ssf.docker as docker
 from ssf.config import SSFConfig
 from ssf.results import *
+from ssf.grpc_runtime.test_utils_grpc import GRPCSession
 
 
 logger = logging.getLogger("ssf")
@@ -23,25 +27,19 @@ logger = logging.getLogger("ssf")
 def test(ssf_config: SSFConfig):
     logger.info("> ==== Test ====")
 
-    # TODO:
-    # Assumes package has been run.
-    # Make some checks and warn if it doesn't look right.
-
     if not poplar_version_ok(ssf_config):
-        logger.warning(
-            f"Skip due to missing or unsupported Poplar version - needs {get_poplar_requirement(ssf_config)}"
+        raise SSFExceptionUnmetRequirement(
+            f"Missing or unsupported Poplar version - needs {get_poplar_requirement(ssf_config)}"
         )
-        return RESULT_SKIPPED
 
     # TODO:
     # This currently assumes FastAPI/Uvicorn.
     # We should adjust for API here.
-    supported_apis = ["fastapi"]
+    supported_apis = get_supported_apis()
     if ssf_config.args.api not in supported_apis:
-        logger.warning(
-            f"Skipped test due to unsupported API {ssf_config.args.api} - needs one of {supported_apis}"
+        raise SSFExceptionUnmetRequirement(
+            f"Missing or unsupported API {ssf_config.args.api} - needs one of {supported_apis}"
         )
-        return RESULT_SKIPPED
 
     application_id = ssf_config.application.id
 
@@ -61,8 +59,11 @@ def test(ssf_config: SSFConfig):
     API_KEY = ssf_config.args.key
     if API_KEY is None:
         API_KEY = "test_key"
+
     PORT = ssf_config.args.port
-    IPADDR = f"http://0.0.0.0:{PORT}"
+    IP = "0.0.0.0"
+    HOST = f"http://{IP}"
+    IPADDR = f"{HOST}:{PORT}"
 
     def subtest_check_server_ready(session, startup_timeout):
         WAIT_PERIOD = 5
@@ -173,21 +174,21 @@ def test(ssf_config: SSFConfig):
         # Start it.
         logger.info(f"> Start {name} {package_tag}")
         if docker.is_running(name, logger=logger):
-            raise ValueError(
+            raise SSFExceptionDockerStatusError(
                 f"{name} exists and is running - use 'docker rm -f {name}' first"
             )
         if docker.is_stopped(application_id, logger=logger):
-            raise ValueError(
+            raise SSFExceptionDockerStatusError(
                 f"{name} exists and is stopped - use 'docker rm {name}' first"
             )
         if not docker.start(
             name,
             package_tag,
             ipus=get_ipu_count_requirement(ssf_config),
-            ssf_options=f"-p {PORT} --key {API_KEY}",
+            ssf_options=f"-p {PORT} --key {API_KEY} --api {ssf_config.args.api}",
             logger=logger,
         ):
-            raise ValueError(f"Failed Start")
+            raise SSFExceptionDockerStatusError(f"Failed Start")
 
     # Always stop container at exit unless test_skip_stop is set
     # (even if we didn't start the container).
@@ -237,7 +238,10 @@ def test(ssf_config: SSFConfig):
         nonlocal subtest_ko
         subtest_ko += 1
 
-    session = requests.session()
+    if ssf_config.args.api == API_FASTAPI:
+        session = requests.session()
+    elif ssf_config.args.api == API_GRPC:
+        session = GRPCSession(IP, PORT, API_KEY)
 
     logger.info(f"> Subtest Check server ready")
     if subtest_check_server_ready(session, startup_timeout):
@@ -292,6 +296,7 @@ def test(ssf_config: SSFConfig):
                             session, IPADDR, index
                         )
                     except Exception as e:
+                        logger.exception(e)
                         logger.error(
                             f"Application subtest failed with {e}. Terminating subtests."
                         )
@@ -332,6 +337,8 @@ def test(ssf_config: SSFConfig):
 
     OK = subtest_ok and not subtest_ko
     if not OK:
-        raise ValueError(f"{name} failed testing OK:{subtest_ok} KO:{subtest_ko}")
+        raise SSFExceptionApplicationTestError(
+            f"{name} failed testing OK:{subtest_ok} KO:{subtest_ko}"
+        )
 
     return RESULT_OK

@@ -2,8 +2,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 import logging
-import os
-import typing
 from typing import Any, List
 
 
@@ -12,6 +10,7 @@ logger = logging.getLogger("ssf")
 from ssf.utils import lookup_dict
 from ssf.version import VERSION
 from ssf.config import SSFConfig
+from ssf.results import SSFExceptionInternalError
 
 
 class TemplateSymbolParser(ABC):
@@ -83,7 +82,7 @@ def expand_template(
                         break
                     sym_end = sym_begin + 2 + line[sym_begin + 2 :].find("}}") + 1
                     if sym_end < 0:
-                        raise ValueError(
+                        raise SSFExceptionInternalError(
                             f"Failed to find closing brackets for symbol beginning at position {sym_begin} in {template_filename}, line {line}"
                         )
                     symbol = line[sym_begin + 2 : sym_end - 1]
@@ -98,7 +97,7 @@ def expand_template(
                             break
 
                     if insert_lines is None:
-                        raise ValueError(
+                        raise SSFExceptionInternalError(
                             f"Failed to replace template symbol {symbol} at position {sym_begin} in {template_filename}, line {line}"
                         )
 

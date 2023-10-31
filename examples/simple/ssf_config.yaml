@@ -7,25 +7,35 @@ application:
   desc: A very simple test API
   version: 1.0
   module: my_application.py
-  trace: True
-  artifacts: []
-
-  dependencies:
-    python: ~
-
-  package:
-    inclusions: []
-    exclusions: []
-
   ipus: 0
-  startup_timeout: 60
+  trace: True
 
 endpoints:
 
   - id: Test1
     version: 1
     desc: This is my simple application interface
-    custom: ~
+
+    inputs:
+
+      - id: x
+        type: Integer
+        desc: An integer value
+        example: 101
+
+    outputs:
+
+      - id: requests
+        type: Integer
+        desc: Count of requests
+
+      - id: x_times_1000
+        type: Integer
+        desc: Input value x times 1000
+
+  - id: Test1
+    version: 2
+    desc: This is a newer version of my simple application interface
 
     inputs:
 
@@ -44,16 +54,17 @@ endpoints:
         desc: Input value x times 1000
 
 
-  - id: Test1
-    version: 2
-    desc: This is a newer version of my simple application interface
-    custom: ~
+  - id: TestQuery
+    version: 1
+    desc: This is a query based version of my simple application interface
+    http_param_format: query
 
     inputs:
 
       - id: x
         type: Integer
         desc: An integer value
+        example: 102
 
     outputs:
 

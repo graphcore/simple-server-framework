@@ -5,14 +5,20 @@ import os
 import typing
 from typing import Any
 
+from ssf.results import *
+
 logger = logging.getLogger("ssf")
 
 from ssf.fastapi_types import handler, gen_output_type_mapping, handlers
-from ssf.utils import lookup_dict
+from ssf.utils import lookup_dict, API_FASTAPI
 from ssf.template import TemplateSymbolParser, expand_template
 from ssf.config import SSFConfig, EndpointDescription
 
 API_INPUT_FORMATS = ["json", "query"]
+
+# Examples for query API
+# x: int= Query(example=99),
+# y: int= Query(example=32322),
 
 
 def get_input_format(inputs, default=None):
@@ -49,13 +55,28 @@ def get_input_format(inputs, default=None):
 def generate(ssf_config: SSFConfig, idx: int, application_endpoint: str):
     api = ssf_config.args.api
 
-    if not api == "fastapi":
-        raise ValueError(f"Unexpected api {api}")
+    if not api == API_FASTAPI:
+        raise SSFExceptionInternalError(f"Unexpected api {api}")
 
     endpoint = ssf_config.endpoints[idx]
 
     inputs = endpoint.inputs
     outputs = endpoint.outputs
+
+    for param in inputs:
+        if (
+            param.dtype not in handlers["generic"]
+            and param.dtype not in handlers["custom"]
+        ):
+            raise SSFExceptionApplicationConfigError(f"Input with unknown type {param}")
+    for param in outputs:
+        if (
+            param.dtype not in handlers["generic"]
+            and param.dtype not in handlers["custom"]
+        ):
+            raise SSFExceptionApplicationConfigError(
+                f"Output with unknown type {param}"
+            )
 
     default = None
     if endpoint.http_param_format is not None:
@@ -79,12 +100,14 @@ def generate(ssf_config: SSFConfig, idx: int, application_endpoint: str):
         def parse(self, symbol_id: str, indent: int = 0) -> str:
             if symbol_id.find("endpoint.") == 0:
                 # Where symbols have syntax ".... {{endpoint.< >}} ...."
-                # Will be replaced with lookup into the "endpoint." namespace.
+                # Will be replaced with lookup into the "endpoint." namespace.
                 return lookup_dict(self.endpoint, symbol_id, namespaced=True)
 
             elif symbol_id == "inputs_as_base_model":
                 # This converts the ssf_config input list to a FastAPI parameter list (one-per-line, comma-separated)
                 parsed_inputs = []
+
+                examples = []
 
                 # If format is query - nothing is added to BaseModel for this symbol_id
                 if input_format == "query":
@@ -99,15 +122,32 @@ def generate(ssf_config: SSFConfig, idx: int, application_endpoint: str):
                                     self.ssf_config, param, is_basemodel=True
                                 )
                             )
+                            if param.example is not None:
+                                examples.extend(
+                                    handler(param.dtype).gen_example(
+                                        self.ssf_config, param
+                                    )
+                                )
                         else:
                             # This should ideally never be raised
-                            logger.error(
+                            raise SSFExceptionInternalError(
                                 "Input format detected as JSON while containing non-JSONable params (e.g. TempFile). Use 'query'."
                             )
-                            raise Exception
 
                 if len(parsed_inputs) == 0:
-                    raise ValueError(f"Inputs empty")
+                    raise SSFExceptionApplicationConfigError(f"Inputs empty")
+
+                if len(examples) > 0:
+                    parsed_inputs.extend(
+                        [
+                            "class Config:",
+                            "  schema_extra = {",
+                            "    'examples': [",
+                            "       {" + ", ".join(examples) + "}",
+                            "    ]",
+                            "  }",
+                        ]
+                    )
 
                 split_string = "\n" + " " * indent
                 insert_lines = split_string.join(parsed_inputs)

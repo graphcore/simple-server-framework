@@ -3,10 +3,10 @@ import logging
 import requests
 import os
 from typing import Tuple
-import json
 
 from ssf.application import SSFApplicationInterface, SSFApplicationTestInterface
 from ssf.results import *
+from ssf.utils import API_GRPC
 
 logger = logging.getLogger()
 
@@ -78,9 +78,9 @@ class MyApplication(SSFApplicationInterface):
         logger.info("MyApp shutdown")
         return RESULT_OK
 
-    def is_healthy(self) -> bool:
-        logger.info("MyApp check health")
-        return True
+    def watchdog(self) -> int:
+        logger.info("MyApp watchdog")
+        return RESULT_OK
 
 
 # NOTE:
@@ -95,6 +95,11 @@ def create_ssf_application_instance() -> SSFApplicationInterface:
 
 class MyApplicationTest(SSFApplicationTestInterface):
     num_subtests = 5
+    ssf_config = None
+
+    def __init__(self, ssf_config) -> None:
+        self.ssf_config = ssf_config
+        super().__init__()
 
     def begin(self, session, ipaddr: str) -> int:
         logger.info("MyApp test begin")
@@ -120,10 +125,11 @@ class MyApplicationTest(SSFApplicationTestInterface):
                 "x_ints_list": [0, 1, 2, 3, 4, 5],
                 "x_floats_list": [0.5, 2.0, 4.0, 1.25],
                 "x_bools_list": [True, False, True],
-                "x_list_any": ["string"],
                 "x_bool_only": True,
                 "x_int_only": 5000,
             }
+            if self.ssf_config.args.api != API_GRPC:
+                test_input["x_list_any"] = ["string"]
 
             json_params = test_input
 
@@ -135,8 +141,9 @@ class MyApplicationTest(SSFApplicationTestInterface):
                 "y_bools_list": [False, True, False],
                 "y_bool_only": True,
                 "y_int_only": 5001,
-                "y_list_any": ["string", 2],
             }
+            if self.ssf_config.args.api != API_GRPC:
+                test_expected["y_list_any"] = ["string", 2]
 
             logger.debug(
                 f"MyApp types test index={index} test_input={test_input} test_expected={test_expected}"
@@ -249,13 +256,15 @@ class MyApplicationTest(SSFApplicationTestInterface):
         if index in range(2, self.num_subtests):
             headers = response.headers
             MAGIC2 = {i: f"{MAGIC2[i]}" for i in MAGIC2}
-
             for k in MAGIC2:
                 try:
                     ok_2 = MAGIC2[k] == headers[k]
+                    if not ok_2:
+                        break
                 except Exception as e:
                     logger.error(f"Types subtest {index} error: {e}")
                     ok_2 = False
+                    break
 
         if not ok_2:
             logger.error(
@@ -307,4 +316,4 @@ class MyApplicationTest(SSFApplicationTestInterface):
 
 def create_ssf_application_test_instance(ssf_config) -> SSFApplicationTestInterface:
     logger.info("Create MyApplication test instance")
-    return MyApplicationTest()
+    return MyApplicationTest(ssf_config)

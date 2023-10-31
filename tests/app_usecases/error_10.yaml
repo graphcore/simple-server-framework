@@ -1,0 +1,39 @@
+# Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+ssf_version: 0.0.1
+
+application:
+  id: simple-test
+  name: Test API
+  desc: A very simple test API
+  version: 1.0
+  module: error_app_missing_test_functions2.py
+  ipus: 0
+  trace: True
+  artifacts: []
+
+  dependencies:
+    python:
+
+  package:
+    inclusions: []
+    exclusions: []
+    tag: "graphcore/cloudsolutions-dev:{{application.id}}-{{application.version}}-latest"
+
+endpoints:
+
+  - id: Test1
+    version: 1
+    desc: This is my simple application interface
+    custom: ~
+
+    inputs:
+
+      - id: x
+        type: Integer
+        desc: An integer value
+
+    outputs:
+
+      - id: requests
+        type: Integer
+        desc: Count of requests

@@ -49,10 +49,6 @@ def docker_login_command(ssf_config: SSFConfig):
 def publish(ssf_config: SSFConfig):
     logger.info("> ==== Publish ====")
 
-    # TODO:
-    # Assumes package has been run.
-    # Make some checks and warn if it doesn't look right.
-    #
     # Publishing just pushes the docker image.
     # Currently, the bundle is not 'published' anywhere.
 
@@ -66,7 +62,9 @@ def publish(ssf_config: SSFConfig):
         # checkpoint the current user Docker config
         exit_code = logged_subprocess(f"Login {server}", cmd, piped_input=pwd)
         if exit_code:
-            raise ValueError(f"Login to {server} errored {exit_code}")
+            raise SSFExceptionDockerServerError(
+                f"Login to {server} errored ({exit_code})"
+            )
         config_cmd = ["--config", config_file]
 
     # With logging INFO for feedback (pushing can take some time).
@@ -78,11 +76,13 @@ def publish(ssf_config: SSFConfig):
         stderr_log_level=logging.INFO,
     )
     if exit_code:
-        raise ValueError(f"Push {package_tag} errored {exit_code}")
+        raise SSFExceptionDockerServerError(f"Push {package_tag} errored ({exit_code})")
     if args.docker_username and args.docker_password:
         server, cmd = docker_logout_command(ssf_config)
         exit_code = logged_subprocess(f"Logout {server}", cmd)
         if exit_code:
-            raise ValueError(f"Logout from {server} failed")
+            raise SSFExceptionDockerServerError(
+                f"Logout from {server} errored ({exit_code})"
+            )
         rmtree(DOCKER_CFG_PATH)
     return RESULT_OK

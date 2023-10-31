@@ -2,98 +2,103 @@
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
-
+    
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
-
-
-
-
-        <link rel="prev" href="../all_options/">
-
-
-        <link rel="next" href="../advanced/">
-
+      
+      
+      
+      
+        <link rel="prev" href="../result_codes/">
+      
+      
+        <link rel="next" href="../grpc/">
+      
+      
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
-
-
-
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.7">
+    
+    
+      
         <title>Features - Simple Server Framework (SSF)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.4b4a2bd9.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
+      
+      
 
 
-
-      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
-
-
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
-
-
-
-
-
-
-
-
-
+    
+    
+      
+    
+    
+      
+        
+        
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-
-
-
+      
+    
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
 
-
-
-
-
-
+    
+    
+    
   </head>
-
-
-
-
-
-
-
-
-
+  
+  
+    
+    
+      
+    
+    
+    
+    
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
-
-
-
+  
+    
+    
       <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-
+    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
-
-
+      
+        
         <a href="#features" class="md-skip">
           Skip to content
         </a>
-
+      
     </div>
     <div data-md-component="announce">
-
+      
     </div>
+    
+    
+      
 
-
-
-
-
+  
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="Simple Server Framework (SSF)" class="md-header__button md-logo" aria-label="Simple Server Framework (SSF)" data-md-component="logo">
-
-
+      
+  
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
+      
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
@@ -105,43 +110,44 @@
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
-
+            
               Features
-
+            
           </span>
         </div>
       </div>
     </div>
-
-
+    
+      
         <form class="md-header__option" data-md-component="palette">
-
-
-
-
-            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
-
-              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
-              </label>
-
-
-
-
-
-            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
-
-              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
-              </label>
-
-
-        </form>
-
-
-
-
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
       <label class="md-header__button md-icon" for="__search">
+        
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
@@ -150,16 +156,19 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
+        
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
-
+        
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
-
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -173,589 +182,822 @@
     </div>
   </div>
 </div>
-
-
+    
+    
       <div class="md-header__source">
         <a href="https://github.com/graphcore/simple-server-framework" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
-
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
   </div>
 </a>
       </div>
-
+    
   </nav>
-
+  
 </header>
-
+    
     <div class="md-container" data-md-component="container">
-
-
-
-
-
-
+      
+      
+        
+          
+        
+      
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
-
-
-
+          
+            
+              
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
+                    
 
 
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="Simple Server Framework (SSF)" class="md-nav__button md-logo" aria-label="Simple Server Framework (SSF)" data-md-component="logo">
-
-
+      
+  
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     Simple Server Framework (SSF)
   </label>
-
+  
     <div class="md-nav__source">
       <a href="https://github.com/graphcore/simple-server-framework" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
-
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
   </div>
 </a>
     </div>
-
+  
   <ul class="md-nav__list" data-md-scrollfix>
-
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+  
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
-        What is SSF?
+        
+  
+  <span class="md-ellipsis">
+    What is SSF?
+  </span>
+  
+
       </a>
     </li>
+  
 
-
-
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+  
     <li class="md-nav__item">
       <a href="../quickstart/" class="md-nav__link">
-        Quick start
+        
+  
+  <span class="md-ellipsis">
+    Quick Start
+  </span>
+  
+
       </a>
     </li>
+  
 
-
-
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+  
     <li class="md-nav__item">
       <a href="../installation/" class="md-nav__link">
-        Installation
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
       </a>
     </li>
+  
 
-
-
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+  
     <li class="md-nav__item">
       <a href="../walkthrough/" class="md-nav__link">
-        Walkthrough
+        
+  
+  <span class="md-ellipsis">
+    Walkthrough
+  </span>
+  
+
       </a>
     </li>
+  
 
-
-
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+  
     <li class="md-nav__item">
       <a href="../model_format/" class="md-nav__link">
-        Model format
+        
+  
+  <span class="md-ellipsis">
+    Model Format
+  </span>
+  
+
       </a>
     </li>
+  
 
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config_detail/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Detail
+  </span>
+  
 
+      </a>
+    </li>
+  
 
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+  
     <li class="md-nav__item">
       <a href="../usage/" class="md-nav__link">
-        CLI Usage
+        
+  
+  <span class="md-ellipsis">
+    CLI Usage
+  </span>
+  
+
       </a>
     </li>
+  
 
-
-
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+  
     <li class="md-nav__item">
       <a href="../all_options/" class="md-nav__link">
-        Options
+        
+  
+  <span class="md-ellipsis">
+    CLI Options
+  </span>
+  
+
       </a>
     </li>
+  
 
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result_codes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Result Codes
+  </span>
+  
 
+      </a>
+    </li>
+  
 
-
-
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+    
+  
+  
     <li class="md-nav__item md-nav__item--active">
-
+      
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-
-
-
-
-
+      
+      
+        
+      
+      
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Features
+          
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
-
+      
       <a href="./" class="md-nav__link md-nav__link--active">
-        Features
+        
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
       </a>
-
-
+      
+        
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-
-
-
-
-
-
+  
+  
+  
+    
+  
+  
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-
+      
         <li class="md-nav__item">
   <a href="#running-an-application-from-a-remote-repository" class="md-nav__link">
     Running an application from a remote repository
   </a>
-
+  
     <nav class="md-nav" aria-label="Running an application from a remote repository">
       <ul class="md-nav__list">
-
+        
           <li class="md-nav__item">
   <a href="#pinning-a-specific-branch-or-version" class="md-nav__link">
     Pinning a specific branch or version
   </a>
-
+  
 </li>
-
+        
           <li class="md-nav__item">
   <a href="#specifying-a-local-application-git-repository" class="md-nav__link">
     Specifying a local application git repository
   </a>
-
+  
 </li>
-
+        
       </ul>
     </nav>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#register-ssh-keys" class="md-nav__link">
     Register SSH keys
   </a>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#optional-api-key" class="md-nav__link">
     Optional API key
   </a>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#replication" class="md-nav__link">
     Replication
   </a>
-
+  
     <nav class="md-nav" aria-label="Replication">
       <ul class="md-nav__list">
-
+        
           <li class="md-nav__item">
-  <a href="#dispatcher-replication" class="md-nav__link">
-    Dispatcher replication
+  <a href="#application-replication" class="md-nav__link">
+    Application replication
   </a>
-
+  
 </li>
-
+        
           <li class="md-nav__item">
-  <a href="#server-replication" class="md-nav__link">
-    Server replication
+  <a href="#server-replication-fastapi-only" class="md-nav__link">
+    Server replication (FastAPI only)
   </a>
-
+  
 </li>
-
+        
           <li class="md-nav__item">
-  <a href="#stacking-replication-mechanism" class="md-nav__link">
-    Stacking replication mechanism
+  <a href="#stacking-replication-mechanism-fastapi-only" class="md-nav__link">
+    Stacking replication mechanism (FastAPI only)
   </a>
-
+  
 </li>
-
-          <li class="md-nav__item">
-  <a href="#application-generic-health-check" class="md-nav__link">
-    Application generic health check
-  </a>
-
-</li>
-
+        
       </ul>
     </nav>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#batching" class="md-nav__link">
     Batching
   </a>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#health-probes" class="md-nav__link">
     Health probes
   </a>
-
+  
+    <nav class="md-nav" aria-label="Health probes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interaction-with-replicate-application" class="md-nav__link">
+    Interaction with --replicate-application
+  </a>
+  
 </li>
-
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scope" class="md-nav__link">
+    Scope
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line-configuration" class="md-nav__link">
+    Command line configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latencies-and-buckets" class="md-nav__link">
+    Latencies and buckets
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
         <li class="md-nav__item">
   <a href="#watchdog" class="md-nav__link">
     Watchdog
   </a>
-
+  
     <nav class="md-nav" aria-label="Watchdog">
       <ul class="md-nav__list">
-
+        
           <li class="md-nav__item">
   <a href="#runtime-generic-watchdog" class="md-nav__link">
     Runtime generic watchdog
   </a>
-
+  
 </li>
-
+        
           <li class="md-nav__item">
   <a href="#request-duration-watchdog" class="md-nav__link">
     Request duration watchdog
   </a>
-
+  
 </li>
-
+        
+          <li class="md-nav__item">
+  <a href="#application-watchdog" class="md-nav__link">
+    Application watchdog
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
-
+  
 </li>
-
+      
+        <li class="md-nav__item">
+  <a href="#apis" class="md-nav__link">
+    APIs
+  </a>
+  
+</li>
+      
     </ul>
-
+  
 </nav>
-
+      
     </li>
+  
 
-
-
-
-
-
-
-
-
-
+    
+      
+      
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../advanced/" class="md-nav__link">
-        Advanced
+      <a href="../grpc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gRPC
+  </span>
+  
+
       </a>
     </li>
+  
 
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Advanced
+  </span>
+  
 
+      </a>
+    </li>
+  
 
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../history/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    History
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
                 </div>
               </div>
-
-
-
+            
+            
+              
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-
+                    
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-
-
-
-
-
-
+  
+  
+  
+    
+  
+  
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-
+      
         <li class="md-nav__item">
   <a href="#running-an-application-from-a-remote-repository" class="md-nav__link">
     Running an application from a remote repository
   </a>
-
+  
     <nav class="md-nav" aria-label="Running an application from a remote repository">
       <ul class="md-nav__list">
-
+        
           <li class="md-nav__item">
   <a href="#pinning-a-specific-branch-or-version" class="md-nav__link">
     Pinning a specific branch or version
   </a>
-
+  
 </li>
-
+        
           <li class="md-nav__item">
   <a href="#specifying-a-local-application-git-repository" class="md-nav__link">
     Specifying a local application git repository
   </a>
-
+  
 </li>
-
+        
       </ul>
     </nav>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#register-ssh-keys" class="md-nav__link">
     Register SSH keys
   </a>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#optional-api-key" class="md-nav__link">
     Optional API key
   </a>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#replication" class="md-nav__link">
     Replication
   </a>
-
+  
     <nav class="md-nav" aria-label="Replication">
       <ul class="md-nav__list">
-
+        
           <li class="md-nav__item">
-  <a href="#dispatcher-replication" class="md-nav__link">
-    Dispatcher replication
+  <a href="#application-replication" class="md-nav__link">
+    Application replication
   </a>
-
+  
 </li>
-
+        
           <li class="md-nav__item">
-  <a href="#server-replication" class="md-nav__link">
-    Server replication
+  <a href="#server-replication-fastapi-only" class="md-nav__link">
+    Server replication (FastAPI only)
   </a>
-
+  
 </li>
-
+        
           <li class="md-nav__item">
-  <a href="#stacking-replication-mechanism" class="md-nav__link">
-    Stacking replication mechanism
+  <a href="#stacking-replication-mechanism-fastapi-only" class="md-nav__link">
+    Stacking replication mechanism (FastAPI only)
   </a>
-
+  
 </li>
-
-          <li class="md-nav__item">
-  <a href="#application-generic-health-check" class="md-nav__link">
-    Application generic health check
-  </a>
-
-</li>
-
+        
       </ul>
     </nav>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#batching" class="md-nav__link">
     Batching
   </a>
-
+  
 </li>
-
+      
         <li class="md-nav__item">
   <a href="#health-probes" class="md-nav__link">
     Health probes
   </a>
-
+  
+    <nav class="md-nav" aria-label="Health probes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interaction-with-replicate-application" class="md-nav__link">
+    Interaction with --replicate-application
+  </a>
+  
 </li>
-
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scope" class="md-nav__link">
+    Scope
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line-configuration" class="md-nav__link">
+    Command line configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latencies-and-buckets" class="md-nav__link">
+    Latencies and buckets
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
         <li class="md-nav__item">
   <a href="#watchdog" class="md-nav__link">
     Watchdog
   </a>
-
+  
     <nav class="md-nav" aria-label="Watchdog">
       <ul class="md-nav__list">
-
+        
           <li class="md-nav__item">
   <a href="#runtime-generic-watchdog" class="md-nav__link">
     Runtime generic watchdog
   </a>
-
+  
 </li>
-
+        
           <li class="md-nav__item">
   <a href="#request-duration-watchdog" class="md-nav__link">
     Request duration watchdog
   </a>
-
+  
 </li>
-
+        
+          <li class="md-nav__item">
+  <a href="#application-watchdog" class="md-nav__link">
+    Application watchdog
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
-
+  
 </li>
-
+      
+        <li class="md-nav__item">
+  <a href="#apis" class="md-nav__link">
+    APIs
+  </a>
+  
+</li>
+      
     </ul>
-
+  
 </nav>
                   </div>
                 </div>
               </div>
-
-
-
+            
+          
+          
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
+                
+                  
 
-
-
-
-
+  
+  
 
 
 <!-- Copyright (c) 2023 Graphcore Ltd. All rights reserved. -->
 <h1 id="features">Features</h1>
 <h2 id="running-an-application-from-a-remote-repository">Running an application from a remote repository</h2>
-<p>The config can specify a remote application with the syntax:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>`git@&lt;remote&gt;|&lt;config yaml path&gt;`
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>`git@&lt;remote&gt;@&lt;branch&gt;|&lt;config yaml path&gt;` # to use a branch
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>`git@&lt;remote&gt;@&lt;sha&gt;|&lt;config yaml path&gt;` # to use commit hash
-</span></code></pre></div>
-If a config yaml file is not specified then the default <code>ssf_config.yaml</code> file (from the repo root) is used.</p>
-<p>The repo code is freshly cloned when <a href="../usage/#ssf-init"><code>init</code></a> is issued.
-Code is pulled to CWD <code>.repo/&lt;repo name&gt;/...</code>
-<img alt="remote-repo-img" src="../img/workflows_local_clone.png" />
+<p>The config can specify a remote application with the syntax:</p>
+<p><code>&lt;REPO&gt;{@BRANCH|@SHA}|&lt;config yaml file&gt;</code></p>
+<p>Where <code>&lt;REPO&gt;</code> can be specified in standard Git protocol form such as:</p>
+<ul>
+<li><code>git@&lt;remote&gt;</code> - use the <code>Git</code> protocol where the repository is being served.</li>
+<li><code>https://&lt;remote&gt;</code> - use the <code>HTTP</code> protocol where the repository is being served and is public.</li>
+<li><code>ssh://&lt;user&gt;@&lt;host&gt;</code> - use the <code>SSH</code> protocol where the repository is on a remote server.</li>
+<li><code>file:///&lt;local path&gt;</code> - use the <code>File</code> protocol where the repository is on the local file system.</li>
+</ul>
+<p>If a config yaml file is not specified then the default <code>ssf_config.yaml</code> file (from the repo root) is used.</p>
+<p>The repo code is freshly cloned when <a href="../usage/#ssf-init"><code>init</code></a> is issued.</p>
+<p>Code is pulled to CWD <code>.repo/&lt;repo name&gt;/...</code></p>
+<p><img alt="remote-repo-img" src="../img/workflows_local_clone.png" />
 For example:</p>
-<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>gc-ssf<span class="w">  </span>--config<span class="w"> </span><span class="s1">&#39;git@github.com:graphcore/simple-server-framework.git|examples/simple/ssf_config.yaml&#39;</span><span class="w"> </span>init<span class="w"> </span>build<span class="w"> </span>run
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gc-ssf<span class="w">  </span>--config<span class="w"> </span><span class="s1">&#39;https://github.com/graphcore/simple-server-framework|examples/simple/ssf_config.yaml&#39;</span><span class="w"> </span>init<span class="w"> </span>build<span class="w"> </span>run
 </span></code></pre></div>
 This will clone <code>simple-server-framework</code> to <code>.repo/simple-server-framework/...</code> and then build and run the <code>simple</code> example.</p>
 <h3 id="pinning-a-specific-branch-or-version">Pinning a specific branch or version</h3>
 <p>You can also specify a branch or a commit hash.<br />
 For instance:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gc-ssf<span class="w">  </span>--config<span class="w"> </span><span class="s1">&#39;git@github.com:username/my-repo.git@my-branch|path/to/ssf_config.yaml&#39;</span><span class="w"> </span>init<span class="w"> </span>build<span class="w"> </span>run
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>gc-ssf<span class="w">  </span>--config<span class="w"> </span><span class="s1">&#39;git@github.com:username/my-repo.git@my-branch|path/to/ssf_config.yaml&#39;</span><span class="w"> </span>init<span class="w"> </span>build<span class="w"> </span>run
 </span></code></pre></div></p>
 <p>This also works when using <a href="../usage/#ssf-deploy"><code>deploy</code></a>. Check out this <a href="../walkthrough/#example-2">example</a> for more details.</p>
 <h3 id="specifying-a-local-application-git-repository">Specifying a local application git repository</h3>
 <p>You can specify a local repository during development or for testing (if running SSF locally).<br />
 For instance:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gc-ssf<span class="w">  </span>--config<span class="w"> </span><span class="s1">&#39;file:///my-repo|path/to/ssf_config.yaml&#39;</span><span class="w"> </span>init<span class="w"> </span>build<span class="w"> </span>run
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gc-ssf<span class="w">  </span>--config<span class="w"> </span><span class="s1">&#39;file:///my-repo|path/to/ssf_config.yaml&#39;</span><span class="w"> </span>init<span class="w"> </span>build<span class="w"> </span>run
 </span></code></pre></div></p>
 <h2 id="register-ssh-keys">Register SSH keys</h2>
 <p>You can use SSH keys to deploy to a VM.
 SSH keys can be registered locally without specifying other commands; the key string needs to be stored in an enviroment variable, for example <code>ENV_KEY</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gc-ssf<span class="w"> </span>--add-ssh-key<span class="w"> </span>ENV_KEY
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gc-ssf<span class="w"> </span>--add-ssh-key<span class="w"> </span>ENV_KEY
 </span></code></pre></div>
 <h2 id="optional-api-key">Optional API key</h2>
 <p>We advise you not to open the generated endpoints publicly, use dedicated services to secure them.
 SSF provides a minimal security layer, when using the command <code>run</code> you can decide to set a key.</p>
 <p>Use the <code>--key &lt;KEY&gt;</code> option to set an API key.</p>
+<p>See <code>--key</code> in <a href="../all_options/#runtime-gc-ssf-run-options">options</a> for more details.</p>
 <h2 id="replication">Replication</h2>
 <p>Replication provides a mechanism for scaling the whole application. Replication levels can be used individually or stacked together depending on the required use case.</p>
-<h3 id="dispatcher-replication"><em>Dispatcher replication</em></h3>
-<p>Use the <code>--replicate-application &lt;N&gt;</code> option to create multiple application instances within one server instance. There will be <code>&lt;N&gt;</code> calls to <code>create_ssf_application_instance</code> from one server instance. Incoming requests will be put in an internal FIFO queue and therefore will be handled in the order they were received.</p>
+<h3 id="application-replication"><em>Application replication</em></h3>
+<p>Use the <code>--replicate-application &lt;N&gt;</code> option to create multiple application instances within one server instance. There will be <code>&lt;N&gt;</code> concurrent instances of the <code>SSFApplicationInterface</code>. Incoming requests will be put in an internal FIFO queue and therefore will be handled in the order they were received.</p>
 <p>Choose this mechanism for applications where the average time spent on request handling (on IPUs) is significantly higher than the time spent on receiving the request and preparing the data.</p>
-<h3 id="server-replication"><em>Server replication</em></h3>
-<p>Use the <code>--replicate-server &lt;K&gt;</code> option to create multiple server instances.</p>
+<p>See <code>--replicate-application</code> in <a href="../all_options/#runtime-gc-ssf-run-options">options</a> for more details.</p>
+<h3 id="server-replication-fastapi-only"><em>Server replication</em> <strong>(FastAPI only)</strong></h3>
+<p>Use the <code>--fastapi-replicate-server &lt;K&gt;</code> option to create multiple server instances.</p>
+<p>See <code>--fastapi-replicate-server</code> in <a href="../all_options/#fastapi-api-options">options</a> for more details.</p>
 <p><strong>NOTE</strong>: The value of <code>&lt;K&gt;</code> should not be higher than the number of processor cores on the machine that is used to run the server. Setting this value higher will cause performance degradation.</p>
 <p>There will be <code>&lt;K&gt;</code> server instances working in <code>&lt;K&gt;</code> separate processes. Incoming requests will be assigned a process by the OS scheduler mechanism. This mechanism will generally choose a process that is waiting on I/O or not consuming CPU resources.</p>
 <p>Choose server replication if the processor cores are likely to spend more time receiving the request and preparing the data than the amount of time the IPUs spend processing the input.</p>
-<h3 id="stacking-replication-mechanism"><em>Stacking replication mechanism</em></h3>
+<h3 id="stacking-replication-mechanism-fastapi-only"><em>Stacking replication mechanism</em> <strong>(FastAPI only)</strong></h3>
 <p>In some cases it may useful to use both these replication mechanisms (dispatcher and server) together. It should be noted that the number of occupied IPUs in a ready state can be calculated using this formula:</p>
 <p><strong><em>IPUs = I * K * N</em></strong></p>
 <p>where:</p>
 <ul>
 <li><strong><em>I</em></strong> is the number of IPUs used by one application instance</li>
-<li><strong><em>K</em></strong> is <code>&lt;K&gt;</code> used as value for <code>--replicate-server &lt;K&gt;</code></li>
+<li><strong><em>K</em></strong> is <code>&lt;K&gt;</code> used as value for <code>--fastapi-replicate-server &lt;K&gt;</code></li>
 <li><strong><em>N</em></strong> is <code>&lt;N&gt;</code> used as value for <code>--replicate-application &lt;N&gt;</code></li>
 </ul>
 <p>If the required number of IPUs are not available then the server will fail to boot.</p>
-<h3 id="application-generic-health-check"><em>Application generic health check</em></h3>
-<p>Applications can expose a custom health check which is being monitored by the SSF server. For details see <a href="../model_format/#create-an-application-interface"><code>is_healthy</code></a> application's interface details.</p>
 <h2 id="batching">Batching</h2>
 <p>Applications may benefit from being able to process multiple inputs at once. For this purpose <code>max_batch_size</code> may be set in your SSF config and this will instruct the server to accumulate user requests into batches of the defined maximal batch size. When set, applications will receive (through a <code>request</code> api) a list of size <code>J</code> containing &lt;1,<code>max_batch_size</code>&gt; dictionaries structured as defined in the SSF config. In this case the SSF server expects this function to return <code>J</code> dictionaries structured as defined in the SSF config.</p>
 <p><strong>NOTE:</strong> The order of the output results should match the order of the input samples in the batch.</p>
 <p>A server batching timeout can be set using the <code>--batching-timeout &lt;T&gt;</code> run option. The server will wait a maximum of <code>&lt;T&gt;</code> seconds to accumulate up to <code>max_batch_size</code> samples. After <code>&lt;T&gt;</code> seconds have elapsed after receiving the first sample of the batch, the server will send as many samples as it has accumulated.</p>
 <p>When <code>max_batch_size</code> is not set a batch size of 1 is assumed.</p>
+<p>See <code>--batching-timeout</code> in <a href="../all_options/#runtime-gc-ssf-run-options">options</a> for more details.</p>
 <h2 id="health-probes">Health probes</h2>
 <p>The SSF server implements <code>health/</code> probes that can be used for higher level monitoring. The three probes available that can be pinged by the GET method are:</p>
 <ul>
@@ -765,6 +1007,52 @@ Example one: Your application crashed during startup, liveness should then be do
 Example 2: Your application has been running for some time and you have set the option <code>--max-allowed-restarts</code> to 5. If your application crashes and keeps crashing on restart, after 5 attempts by the watchdog mechanism you will have exceeded the <code>max-allowed-restarts</code> and liveness will be down.</li>
 <li><code>health/ready</code>: (200:success, other:failure). Readiness probe. Returns 200 as soon as your application is ready to receive requests. Typically returns 200 when at least one replica is ready.</li>
 </ul>
+<p>See <code>--max-allowed-restarts</code> in <a href="../all_options/#runtime-gc-ssf-run-options">options</a> for more details.</p>
+<h3 id="interaction-with-replicate-application">Interaction with --replicate-application</h3>
+<ul>
+<li><code>health/live</code>: This returns Success until at least <strong>one</strong> replica is permanently stopped (max allowed restarts is reached).</li>
+<li><code>health/ready</code>: This returns Success while there is at least <strong>one</strong> live and ready replica.</li>
+</ul>
+<p>It is possible for liveness to be down while readiness is still up in the situation where one replica has failed but another is still running.</p>
+<h2 id="metrics">Metrics</h2>
+<p>By default SSF starts a Prometheus client, allowing the collection of runtime metrics. There is a fixed set of metric <em>basenames</em>, including the following:</p>
+<ul>
+<li><code>ssf_dispatch_latency</code> - duration of request limited to time spent in application.</li>
+<li><code>[http/grpc]_request_duration_seconds</code> - duration of HTTP/gRPC requests in seconds (seen by ASGI channel).</li>
+<li><code>[http/grpc]_request_size_bytes</code> - size of requests in bytes.</li>
+<li><code>[http/grpc]_response_size_bytes</code> - size of responses in bytes.</li>
+</ul>
+<h3 id="scope">Scope</h3>
+<p>SSF metrics are exported in separate groups so you can distinguish events that differ by:</p>
+<ul>
+<li>SSF endpoint address (name and version)</li>
+<li>response status codes - 2xx, 3xx, 4xx and so on for FastAPI or error code / OK status for gRPC</li>
+</ul>
+<p>The following endpoints are excluded from metrics:</p>
+<ul>
+<li>the Prometheus metrics endpoint itself (configurable with SSF <code>run</code> argument <code>--prometheus-endpoint</code>)</li>
+<li>health checks routes - <code>/startup/</code>, <code>/ready/</code>, <code>/live/</code></li>
+</ul>
+<p>See <code>--prometheus-endpoint</code> in <a href="../all_options/#runtime-gc-ssf-run-options">options</a> for more details.</p>
+<h3 id="command-line-configuration">Command line configuration</h3>
+<p>The following SSF run arguments can be used for SSF Prometheus configuration:</p>
+<ul>
+<li><code>--prometheus-disabled</code> - (default: not present) by default metrics client is started, adding this argument will disable it.</li>
+<li><code>--prometheus-endpoint</code> - (default: "/metrics") URL path on which server will expose the metrics.</li>
+<li><code>--prometheus-buckets</code> - buckets to be used for all duration metrics (for details see <a href="#latencies-and-buckets">Latencies and buckets</a>).</li>
+<li><code>--prometheus-port</code> - defines the port on which Prometheus metrics are exposed. When this argument is passed, SSF will start a separate HTTP server running Prometheus client and the metrics will be available on any given address on the chosen port. When this argument is not passed, metrics port depends on the chosen API:</li>
+<li>for <code>fastapi</code>: the Prometheus client will be served on the same port using the same FastAPI server as the the service. In this case metrics will be accessible on endpoint <code>/metrics</code>. It is possible to change the metrics endpoint using the <code>--prometheus-endpoint</code> argument</li>
+<li>for <code>gRPC</code>: the port will default to the server port incremented by one i.e. when SSF server runs on port 8200 then metrics will be served on port 8201</li>
+</ul>
+<p>See <code>--prometheus-***</code> in <a href="../all_options/#runtime-gc-ssf-run-options">options</a> for more details.</p>
+<h3 id="latencies-and-buckets">Latencies and buckets</h3>
+<p>Metrics that represent durations have been implemented as Prometheus <code>histograms</code> which means that the events are counted in configurable buckets. Each duration metric with a name containing &lt;<em>basename</em>&gt; exposes multiple time series:</p>
+<ul>
+<li>&lt;<em>basename</em>&gt;_bucket - cumulative counters for the observation buckets. Each bucket is defined by a number that is interpreted as the threshold value of duration in seconds and the bucket counts the requests which have a duration that is equal to, or smaller than, the defined threshold value. When not configured the following buckets are created by default: [ 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 7.5, 10, 30, 60 ]. The last bucket is always <code>+Inf</code>and collects all events.</li>
+<li>&lt;<em>basename</em>&gt;_sum - the <strong>total sum</strong> of all durations.</li>
+<li>&lt;<em>basename</em>&gt;_count - the count of events that have been observed (value-wise identical to bucket <code>+Inf</code>)</li>
+</ul>
+<p>As an example of how to use these metrics, to get a graph of average <code>ssf_dispatch_latency</code> you would draw <code>ssf_dispatch_latency_sum</code> / <code>ssf_dispatch_latency_count</code>. This definition is possible because of the Prometheus server support for expressions.</p>
 <h2 id="watchdog">Watchdog</h2>
 <p>The SSF server provides watchdog capabilities to handle application runtime problems by detecting bad states and restarting the application under defined conditions.</p>
 <h3 id="runtime-generic-watchdog"><em>Runtime generic watchdog</em></h3>
@@ -775,48 +1063,56 @@ Example 2: Your application has been running for some time and you have set the 
 <li><code>--watchdog-request-threshold &lt;T&gt;</code> float value T sets a threshold in seconds. Default value is 0 which disables the request duration watchdog.</li>
 <li><code>--watchdog-request-average &lt;A&gt;</code> integer A defines the number of last requests included in calculating the average watchdog request duration.</li>
 </ul>
+<p>See <code>--watchdog-request-threshold</code> and <code>--watchdog-request-average</code> in <a href="../all_options/#runtime-gc-ssf-run-options">options</a> for more details.</p>
+<h3 id="application-watchdog"><em>Application watchdog</em></h3>
+<p>Applications can expose a custom watchdog which is being monitored by the SSF server. For details see <a href="../model_format/#create-an-application-interface"><code>watchdog</code></a> in application's interface details. This will be called periodically by the server while no requests are being issued.</p>
+<p>See option <code>--watchdog-ready-period</code> in <a href="../all_options/#runtime-gc-ssf-run-options">options</a> for more details. </p>
+<h2 id="apis">APIs</h2>
+<p>SSF supports serving inference through HTTP/S endpoints (FastAPI) and gRPC endpoints (gRPC Python). The endpoint can be chosen using argument <code>--api</code> with value <code>fastapi</code> or <code>grpc</code>. By default SSF uses <code>--api fastapi</code> to start HTTP/S endpoint. If <code>--api</code> is used to override this, then you <strong>must</strong> set <code>--api</code> for all issued commands (build, run, package etc).</p>
+<p>See <code>--api</code> in <a href="../all_options/#general-options">options</a> for more details.</p>
 
 
 
 
 
-
+                
               </article>
             </div>
-
-
+          
+          
         </div>
-
+        
       </main>
-
+      
         <footer class="md-footer">
-
+  
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
-
-
+  
+  
     Made with
     <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
       Material for MkDocs
     </a>
-
+  
 </div>
-
+      
     </div>
   </div>
 </footer>
-
+      
     </div>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.select", "content.code.copy"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-
-
-      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
-
-
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.select", "content.code.copy"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
   </body>
 </html>

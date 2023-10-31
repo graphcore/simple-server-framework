@@ -17,7 +17,7 @@ from starlette.status import (
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
-from common import *
+from ssf.common_runtime.common import *
 from server import applications
 from server_security import router
 from server_security import get_api_key
@@ -71,7 +71,6 @@ def run_{{endpoint.id}}_v{{endpoint.version}} (
     {{outputs_as_doc_strings}}
 
     In addition, the response headers will include the following metadata:
-    - metrics-request-latency : total time in the server to serve the request including time in queue waiting to be dispatched.
     - metrics-dispatch-latency : time in dispatcher to process the request.
     """
 
@@ -101,7 +100,6 @@ def run_{{endpoint.id}}_v{{endpoint.version}} (
         results = applications.dispatcher["{{config.application.id}}"].get_result()
 
         result_dequeued_time = time.time()
-        request_latency = result_dequeued_time - request_queued_time
         dispatch_latency = str(results[HEADER_METRICS_DISPATCH_LATENCY])
 
         if {{config.application.trace:False}}:
@@ -110,13 +108,12 @@ def run_{{endpoint.id}}_v{{endpoint.version}} (
 
         headers = {
             HEADER_METRICS_DISPATCH_LATENCY: str(dispatch_latency),
-            HEADER_METRICS_REQUEST_LATENCY: str(request_latency)
         }
 
         {{postprocess}}
 
         if {{config.application.trace:False}}:
-            logger.info(f"> {{config.application.name}} Leave ({dispatch_latency},{request_latency})")
+            logger.info(f"> {{config.application.name}} Leave ({dispatch_latency})")
 
 
         {{returns}}

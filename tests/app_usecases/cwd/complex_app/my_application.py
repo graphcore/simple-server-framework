@@ -6,7 +6,19 @@ import requests
 from ssf.application import SSFApplicationInterface, SSFApplicationTestInterface
 from ssf.results import *
 
+# description from config directory.
+from description import *
+
+# builder from application module directory.
+from builder import *
+
+# core from directory relative to custom syspath.
+from core import *
+
 logger = logging.getLogger()
+
+# Confirm 'description' module is imported.
+print(DESCRIPTION)
 
 
 class MyApplication(SSFApplicationInterface):
@@ -15,14 +27,10 @@ class MyApplication(SSFApplicationInterface):
 
     def build(self) -> int:
         logger.info(f"MyApp build CWD:{os.getcwd()}")
-        try:
-            os.makedirs("generated")
-        except:
-            pass
-        with open("generated/a", "w") as f:
-            f.write("generated file")
-        with open("generated/b", "w") as f:
-            f.write("generated file")
+
+        # Confirm 'builder' module is imported and available.
+        builder()
+
         return RESULT_OK
 
     def startup(self) -> int:
@@ -39,9 +47,9 @@ class MyApplication(SSFApplicationInterface):
         logger.info(f"MyApp shutdown CWD:{os.getcwd()}")
         return RESULT_OK
 
-    def is_healthy(self) -> bool:
-        logger.info(f"MyApp is_healthy CWD:{os.getcwd()}")
-        return True
+    def watchdog(self) -> int:
+        logger.info(f"MyApp watchdog CWD:{os.getcwd()}")
+        return RESULT_OK
 
 
 def create_ssf_application_instance() -> SSFApplicationInterface:
@@ -56,6 +64,9 @@ class MyApplicationTest(SSFApplicationTestInterface):
 
     def subtest(self, session, ipaddr: str, index: int) -> (bool, str, bool):
         logger.info(f"MyApp test subtest CWD:{os.getcwd()}")
+
+        # Confirm 'core' module is imported and available.
+        core()
 
         try:
             url = f"{ipaddr}/v1/Test1"

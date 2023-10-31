@@ -4,7 +4,7 @@ ssf_version: 1.0.0
 application:
   id: cwd-regular-test
   name: Test CWD
-  desc: Test CWD for user entry-points
+  desc: Test CWD for user entry-points (regular arrangement)
   version: 1.0
   module: my_application.py
   trace: True

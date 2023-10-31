@@ -4,6 +4,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Any
 from ssf.config import SSFConfig, EndpointParam
+from ssf.results import SSFExceptionInternalError, SSFExceptionNotImplementedError
 
 # Create SSFType class for each SSFType we want to support.
 # Add the new SSFType (instance) to 'handlers' at the end.
@@ -109,17 +110,57 @@ class SSFType(ABC):
         """
         pass
 
+    @abstractmethod
+    def gen_example(ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
+        """
+        Generate FastAPI code that provides the example for the type as key:value dictionary entry.
 
-class SSFType_Generic(ABC):
+        Parameters:
+                ssf_config (dataclass): The SSF config
+                param (dataclass): Metadata describing the param
+
+        Returns:
+                Code as a list of lines.
+        """
+        pass
+
+
+class SSFType_Generic(SSFType):
     def __init__(self, typename: str):
         self.typename = typename
+
+    def get_example_string(self, param: EndpointParam):
+        def type_convert(e):
+            if "str" in self.typename:
+                return f"'{e}'"
+            elif "int" in self.typename:
+                return f"{int(e)}"
+            elif "float" in self.typename:
+                return f"{float(e)}"
+            elif "bool" in self.typename:
+                return f"{e=='True'}"
+            return f"'{e}'"
+
+        listof = any(t in self.typename for t in ["List", "list"])
+        if listof:
+            example = []
+            for e in param.example.split(","):
+                example.append(type_convert(e))
+            example_string = "[" + ",".join(example) + "]"
+        else:
+            example_string = type_convert(param.example)
+        return example_string
 
     def gen_param(
         self, ssf_config: SSFConfig, param: EndpointParam, is_basemodel: bool = False
     ) -> List[str]:
-        return [
-            f"{param.id}: {self.typename}{'= Query(...)' if not is_basemodel else ''}"
-        ]
+        if is_basemodel:
+            return [f"{param.id}: {self.typename}"]
+        # as Query, with example if it exists.
+        example = ""
+        if param.example is not None:
+            example = f"example={self.get_example_string(param)}"
+        return [f"{param.id}: {self.typename} = Query({example})"]
 
     def gen_docstring(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
         return [f"- {param.id} : {param.description}"]
@@ -138,28 +179,35 @@ class SSFType_Generic(ABC):
     def gen_return(self, ssf_config: SSFConfig, param: EndpointParam) -> Any:
         return (f"{param.id}", f"{self.typename}")
 
+    def gen_example(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
+        param_string = self.get_example_string(param)
+        return [f"'{param.id}' : {param_string}"]
 
-class SSFType_PngImageBytes(ABC):
+
+class SSFType_PngImageBytes(SSFType):
     """
     - Supports return of a PNG image as bytes (media_type == image/png)
     """
 
+    def __init__(self, typename: str):
+        self.typename = typename
+
     def gen_param(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
-        raise NotImplementedError(f"Not implemented {str} {param}")
+        raise SSFExceptionNotImplementedError(f"Not implemented {str} {param}")
 
     def gen_docstring(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
         return [f"- {param.id} : {param.description}"]
 
     def gen_preprocess(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
-        raise NotImplementedError(f"Not implemented {str} {param}")
+        raise SSFExceptionNotImplementedError(f"Not implemented {str} {param}")
 
     def gen_request_dict(
         self, ssf_config: SSFConfig, param: EndpointParam
     ) -> List[str]:
-        raise NotImplementedError(f"Not implemented {str} {param}")
+        raise SSFExceptionNotImplementedError(f"Not implemented {str} {param}")
 
     def gen_postprocess(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
-        raise NotImplementedError(f"Not implemented {str} {param}")
+        raise SSFExceptionNotImplementedError(f"Not implemented {str} {param}")
 
     def gen_return(
         self, ssf_config: SSFConfig, param: EndpointParam
@@ -167,8 +215,11 @@ class SSFType_PngImageBytes(ABC):
         param = param.id
         return f'content=results["{param}"], media_type="image/png"'
 
+    def gen_example(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
+        raise SSFExceptionNotImplementedError(f"Not implemented {str} {param}")
 
-class SSFType_TempFile(ABC):
+
+class SSFType_TempFile(SSFType):
     """
     TempFile
     - The TempFile input parameter type is FastAPI's 'UploadFile'.
@@ -176,7 +227,12 @@ class SSFType_TempFile(ABC):
     - The temporary file filename is queued in the request.
     """
 
-    def gen_param(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
+    def __init__(self, typename: str):
+        self.typename = typename
+
+    def gen_param(
+        self, ssf_config: SSFConfig, param: EndpointParam, is_basemodel: bool = False
+    ) -> List[str]:
         return [f"{param.id}: UploadFile = File(...)"]
 
     def gen_docstring(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
@@ -207,7 +263,10 @@ class SSFType_TempFile(ABC):
     def gen_return(
         self, ssf_config: SSFConfig, param: EndpointParam
     ) -> Tuple[List[str], List[str]]:
-        raise NotImplementedError(f"Not implemented {str} {param}")
+        raise SSFExceptionNotImplementedError(f"Not implemented {str} {param}")
+
+    def gen_example(self, ssf_config: SSFConfig, param: EndpointParam) -> List[str]:
+        raise SSFExceptionNotImplementedError(f"Not implemented {str} {param}")
 
 
 handlers = {
@@ -223,8 +282,8 @@ handlers = {
         "ListBoolean": "List[bool]",
     },
     "custom": {
-        "PngImageBytes": SSFType_PngImageBytes(),
-        "TempFile": SSFType_TempFile(),
+        "PngImageBytes": SSFType_PngImageBytes("PngImageBytes"),
+        "TempFile": SSFType_TempFile("TempFile"),
     },
 }
 
@@ -242,7 +301,7 @@ def handler(type: str) -> SSFType:
     elif type in handlers["custom"]:
         return handlers["custom"][type]
     else:
-        raise ValueError(f"No handler to ssf_type {type}")
+        raise SSFExceptionInternalError(f"No handler to ssf_type {type}")
 
 
 def gen_output_type_mapping(param: str, astype: str) -> str:

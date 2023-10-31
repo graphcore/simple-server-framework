@@ -1,0 +1,73 @@
+# Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+ssf_version: 1.0.0
+
+application:
+  id: whisper-small-ft
+  name: Whisper Small
+  desc: Single-job fine-tuning microservice for Whisper
+  version: 1.0
+  license_name: MIT License
+  license_url: https://github.com/openai/whisper/blob/main/LICENSE
+  module: whisper_ft_app.py
+  ipus: 4
+  trace: True
+  artifacts: []
+
+  dependencies:
+    python: numpy==1.23.5, librosa==0.10.1, tokenizers==0.12.1, evaluate==0.4.0
+    poplar: ["3.3.0"]
+
+  package:
+    inclusions: ["./whisper_exe_cache/*","ft_interface.py","whisper_ft_utils.py", "pip_post_install.py"]
+    exclusions: []
+    docker:
+      baseimage: graphcore/pytorch:3.3.0-ubuntu-20.04
+
+endpoints:
+
+  - id: finetuning
+    version: 1
+    desc: Fine-tune whisper small
+    inputs:
+      - id: task
+        type: String
+        desc: |
+          One the the following task {"dataset", "train", "eval", "test", "save", "status"}.
+          (Not executed if status is "Busy")
+
+          Usage:
+            dataset: process the dataset
+            train : start finetuning job
+            eval : start eval job
+            test : test the model
+            save : upload model checkpoint to HF hub
+            status : return status string
+
+      - id: parameters
+        type: String
+        desc: |
+          Training arguments to override (as a JSON string).
+
+            Args only used by the task "train":
+            - "epochs" (int): number of fine-tuinig epochs
+            - "learning_rate" (float)
+            - "warmup_ratio" (float between 0 and 1): Ratio of the total epochs for learning-rate warmup
+
+            Args only used by the task "dataset":
+            - "dataset" (String): Huggingface dataset name
+            - "language" (String): Huggingface kanguage key for dataset and tokenizer
+
+          Default:
+            {
+            "epochs": 1,
+            "learning_rate": 1e-5,
+            "warmup_ratio": 0.25,
+            "dataset": "mozilla-foundation/common_voice_13_0",
+            "language": "as"
+            }
+
+
+    outputs:
+      - id: response
+        type: String
+        desc: Fine-tuning server response string.

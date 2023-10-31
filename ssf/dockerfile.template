@@ -16,13 +16,15 @@ RUN apt-get install unzip
 
 {{config.application.package.docker_run:}}
 
-COPY ssf_package_requirements.txt .
-
 COPY src ./src
 
 COPY src/ssf/LICENSE ./licenses/ssf/LICENSE
 
-RUN pip3 install --no-cache-dir -r ssf_package_requirements.txt
+
+RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache-dir -r src/ssf_package_requirements.txt
+RUN pip3 install -e ./src
+
 
 # Base image information
 LABEL "ai.graphcore.ssf.base.image"="{{baseimage}}"

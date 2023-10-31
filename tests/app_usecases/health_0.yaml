@@ -34,10 +34,25 @@ endpoints:
 
     outputs:
 
+      - id: replica
+        type: Integer
+        desc: Replica index
       - id: requests
         type: Integer
         desc: Count of requests
-
-      - id: x_times_1000
+      - id: x
         type: Integer
-        desc: Input value x times 1000
+        desc: The input value x
+
+  - id: Fail
+    version: 1
+    desc: This interface will trigger a failure/exception.
+    custom: ~
+    inputs:
+      - id: failure_type
+        type: String
+        desc: Type of failure
+    outputs:
+      - id: response
+        type: String
+        desc: ok

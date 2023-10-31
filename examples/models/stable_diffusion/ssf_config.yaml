@@ -5,24 +5,26 @@ application:
   id: sd2_api
   name: Stable Diffusion 2 API
   desc: Stable Diffusion 2 (Text to Image 512x512) API
-  version: 1.0
+  version: 1.1
   license_name: CreativeML Open RAIL++-M License
   license_url: https://huggingface.co/stabilityai/stable-diffusion-2/blob/main/LICENSE-MODEL
   module: sd2_ssf_app.py
   ipus: 4
   trace: True
-  artifacts: ["weights.onnx", "./model_cache"]
+  artifacts: ["weights.onnx", "./exe_cache/*"]
   max_batch_size: 1
   startup_timeout: 3000
 
   dependencies:
     python: requirements.txt
-    poplar: ["3.2.0"]
+    poplar: ["3.3.0"]
 
   package:
     inclusions: ["./exe_cache/*"]
     exclusions: []
-    baseimage: graphcore/pytorch:3.2.0-ubuntu-20.04
+
+    docker:
+      baseimage: graphcore/pytorch:3.3.0-ubuntu-20.04
 
 endpoints:
 
@@ -36,22 +38,27 @@ endpoints:
       - id: prompt
         type: String
         desc: Image description text prompt
+        example: A large bottle of shiny blue juice
 
       - id: random_seed
         type: Integer
         desc: Random seed for image generation
+        example: 5555
 
       - id: guidance_scale
         type: Float
         desc: Guidance scale for image generation to strongly or weakly match prompt.
+        example: 9
 
       - id: num_inference_steps
         type: Integer
         desc: Number of steps for image generation - higher steps improves image quality.
+        example: 25
 
       - id: negative_prompt
         type: String
         desc: Negative text prompt for image description - include features NOT wanted in generated image.
+        example: red
 
     outputs:
 

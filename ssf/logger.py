@@ -6,6 +6,7 @@ import sys
 import traceback
 import multiprocessing as mp
 import atexit
+from ssf.results import SSFExceptionInternalError
 
 ctx = mp.get_context("spawn")
 default_logging_level_file = logging.DEBUG
@@ -14,6 +15,13 @@ default_logging_level_stdout = logging.INFO
 log_queue = None
 listener = None
 
+LOG_FILENAME = "ssf.log"
+
+
+def reset_log():
+    # (Re)create empty log file.
+    open(LOG_FILENAME, "w")
+
 
 def log_listener_process(
     queue, init_logging, default_logging_level_file, default_logging_level_stdout
@@ -21,7 +29,7 @@ def log_listener_process(
     # Initialize root-level logger
     init_logging(
         None,
-        "ssf.log",
+        LOG_FILENAME,
         "w",
         default_logging_level_file,
         True,
@@ -34,6 +42,8 @@ def log_listener_process(
                 break
             logger = logging.getLogger(record.name)
             logger.handle(record)
+        except KeyboardInterrupt:
+            pass
         except Exception:
             import sys, traceback
 
@@ -53,7 +63,7 @@ def str_to_log_level(level: str):
         return logging.ERROR
     elif level == "CRITICAL":
         return logging.CRITICAL
-    raise ValueError(f"Unknown log level {level}")
+    raise SSFExceptionInternalError(f"Unknown log level {level}")
 
 
 def set_default_logging_levels(file_level, stdout_level):

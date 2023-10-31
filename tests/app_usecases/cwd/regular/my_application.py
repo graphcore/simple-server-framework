@@ -39,9 +39,9 @@ class MyApplication(SSFApplicationInterface):
         logger.info(f"MyApp shutdown CWD:{os.getcwd()}")
         return RESULT_OK
 
-    def is_healthy(self) -> bool:
-        logger.info(f"MyApp is_healthy CWD:{os.getcwd()}")
-        return True
+    def watchdog(self) -> int:
+        logger.info(f"MyApp watchdog CWD:{os.getcwd()}")
+        return RESULT_OK
 
 
 def create_ssf_application_instance() -> SSFApplicationInterface:

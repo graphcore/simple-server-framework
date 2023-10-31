@@ -15,5 +15,9 @@ class TestsStableDiffusion(model.TestModel):
     def test_stable_diffusion(self):
         return self.test_model()
 
+    @pytest.mark.skipif(
+        not model.check_image_available(),
+        reason=f"Skipped test (Image {model.get_default_ssf_image()} is not available)",
+    )
     def test_stable_diffusion_within_ssf(self):
         return self.test_model_within_ssf()

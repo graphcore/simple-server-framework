@@ -37,3 +37,16 @@ endpoints:
       - id: response
         type: String
         desc: ok
+
+  - id: Fail
+    version: 1
+    desc: This interface will trigger a failure/exception.
+    custom: ~
+    inputs:
+      - id: failure_type
+        type: String
+        desc: Type of failure
+    outputs:
+      - id: response
+        type: String
+        desc: ok

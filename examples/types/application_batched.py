@@ -6,24 +6,18 @@ from time import sleep
 from typing import Tuple
 
 from ssf.application import SSFApplicationInterface, SSFApplicationTestInterface
-from ssf.fastapi_runtime.common import (
+from ssf.common_runtime.common import (
     HEADER_METRICS_DISPATCH_LATENCY,
     HEADER_METRICS_REQUEST_LATENCY,
 )
 from ssf.results import *
 
-try:
-    from examples.types.my_application import MyApplication, MyApplicationTest
-except:
-    from app.my_application import MyApplication, MyApplicationTest
+from my_application import MyApplication, MyApplicationTest
 
 logger = logging.getLogger()
 
 
-@dataclass
 class ApplicationTest(MyApplicationTest):
-    ssf_config: None
-
     def task_with_delay(self, delay_in_seconds, func, *argv):
         sleep(delay_in_seconds)
         return func(*argv)

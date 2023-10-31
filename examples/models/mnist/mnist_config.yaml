@@ -14,12 +14,13 @@ application:
 
   dependencies:
     python: requirements.txt
-    poplar: ["3.2.0"]
+    poplar: ["3.3.0"]
 
   package:
     inclusions: ["mnist_datasets_downloaded/**/*", "exe_cache/**/*"]
     exclusions: []
-    baseimage: graphcore/pytorch:3.2.0-ubuntu-20.04
+    docker:
+      baseimage: graphcore/pytorch:3.3.0-ubuntu-20.04
 
 endpoints:
 

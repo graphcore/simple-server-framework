@@ -4,18 +4,26 @@ import importlib.util
 import glob
 import logging
 import os
-from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import pickle
+import base64
 
 from typing import List, Optional, Dict, Union
 from threading import Thread
 from yaml import safe_load as yaml_safe_load
 
-from argparse import Namespace
 from dataclasses import is_dataclass
 from ssf.config import SSFConfig
+from ssf.results import (
+    SSFExceptionInternalError,
+    SSFExceptionNetworkError,
+    SSFExceptionApplicationModuleError,
+)
+
+API_FASTAPI = "fastapi"
+API_GRPC = "grpc"
 
 logger = logging.getLogger("ssf")
 
@@ -52,12 +60,139 @@ def lookup_dict(d: Optional[Dict], symbol_id: str, namespaced=False) -> str:
 
     if not ret:
         if default is None:
-            raise ValueError(f"{symbol_id} not specified and there is no default")
+            raise SSFExceptionInternalError(
+                f"{symbol_id} not specified and there is no default"
+            )
         else:
-            logger.warning(f"{symbol_id} not specified - defaulting to '{default}'")
+            logger.info(f"{symbol_id} not specified. Defaulting to '{default}'")
             ret = default
 
     return ret
+
+
+# Set value in dict, supporting nested dictionaries/lists.
+# e.g.
+#  set_dict(d, "application.name", "new application name")
+# If the field is new then it will set value as string.
+# If the field already exists then the type must match.
+# For lists, the index must be specified:
+# e.g.
+#   set_dict(d, "mylist[5]", "value for mylist[5]")
+# (list will be grown to accomadate the index)
+# Returns True if succesful, else False.
+def set_dict(d: Dict, symbol_id: str, value):
+    ref = symbol_id.split(".")
+    last_node = len(ref) - 1
+    logger.debug(f"set dict: '{symbol_id}' = '{value}'")
+
+    def leaf_type(x):
+        return x is None or isinstance(x, (int, float, str, bool))
+
+    for i, r in enumerate(ref):
+        logger.debug(f"set dict: enum {i}/{last_node},'{r}' with d {d}")
+        # Decode indexed lists.
+        idx = None
+        ilist = r.replace("[", ",").replace("]", ",").split(",")
+        logger.debug(f"{ilist}")
+        if len(ilist) == 3:
+            idx = int(ilist[1])
+            r = ilist[0]
+            if r in d:
+                if not isinstance(d[r], list):
+                    logger.warning(
+                        f"set dict: '{r}[{idx}]' is not valid for non-list field"
+                    )
+                    return False
+                if idx > len(d[r]) - 1:
+                    d[r].extend([None] * (idx - (len(d[r]) - 1)))
+        elif r in d and isinstance(d[r], list):
+            logger.warning(f"set dict: '{r}' is a list; index required `{r}[<idx>]`")
+            return False
+
+        if r in d:
+            logger.debug(f"set dict: -> '{r}[{idx}]' (type {type(d[r])})")
+            if isinstance(d[r], dict):
+                logger.debug(f"set dict:      dict node with '{r}'")
+                d = d[r]
+            elif isinstance(d[r], list) and not leaf_type(d[r][idx]):
+                logger.debug(
+                    f"set dict:      list node with '{r}[{idx}]' (type {type(d[r][idx])})"
+                )
+                d = d[r][idx]
+            elif idx is None:
+                logger.debug(f"set dict:      leaf with '{r}' = '{value}'")
+                if i < last_node:
+                    logger.warning(
+                        f"set dict: '{symbol_id}' includes an existing leaf field '{r}'"
+                    )
+                    return False
+                if isinstance(d[r], bool):
+                    if value not in ["True", "False"]:
+                        logger.warning(
+                            f"set dict: failed to set existing field value '{r}' = {type(d[r])}({value})"
+                        )
+                        return False
+                    d[r] = value == "True"
+                else:
+                    try:
+                        d[r] = type(d[r])(value)
+                    except:
+                        logger.warning(
+                            f"set dict: failed to set existing field value '{r}' = {type(d[r])}({value})"
+                        )
+                        return False
+                logger.debug(
+                    f"set dict: existing field value '{r}' = {type(d[r])}({value}) == {d[r]} ({type(d[r])})"
+                )
+                return True
+            else:
+                logger.debug(f"set dict:      leaf with '{r}[{idx}]' = '{value}'")
+                if i < last_node:
+                    logger.warning(
+                        f"set dict: '{symbol_id}' includes an existing leaf field '{r}[{idx}]'"
+                    )
+                    return False
+                if d[r][idx] is None:
+                    d[r][idx] = str(value)
+                elif isinstance(d[r][idx], bool):
+                    if value not in ["True", "False"]:
+                        logger.warning(
+                            f"set dict: failed to set existing field value '{r}[{idx}]' = {type(d[r][idx])}({value})"
+                        )
+                        return False
+                    d[r][idx] = value == "True"
+                else:
+                    try:
+                        d[r][idx] = type(d[r][idx])(value)
+                    except:
+                        logger.warning(
+                            f"set dict: failed to set existing field value '{r}[{idx}]' = {type(d[r][idx])}({value})"
+                        )
+                        return False
+                logger.debug(
+                    f"set dict: existing field value '{r}[{idx}]' = {type(d[r][idx])}({value}) == {d[r][idx]} ({type(d[r][idx])})"
+                )
+                return True
+        else:
+            logger.debug(f"set dict: -> '{r}[{idx}]'")
+            if idx is None:
+                if i == last_node:
+                    d[r] = str(value)
+                    logger.debug(f"set dict: new field value '{r}' = {d[r]}")
+                    return True
+                d[r] = {}
+                d = d[r]
+            else:
+                if i == last_node:
+                    d[r] = [None] * (1 + idx)
+                    d[r][idx] = str(value)
+                    logger.debug(f"set dict: new field value '{r}[{idx}]' = '{d[r]}'")
+                    return True
+                d[r] = [{}] * (1 + idx)
+                d = d[r][idx]
+
+    logger.warning(f"set dict: '{symbol_id}' references an existing non-leaf field")
+    return False
 
 
 # Expand all symbols in string using specified dictionary.
@@ -68,7 +203,7 @@ def expand_str(entry: str, d: dict):
             break
         sym_end = sym_begin + 2 + entry[sym_begin + 2 :].find("}}") + 1
         if sym_end < 0:
-            raise ValueError(
+            raise SSFExceptionInternalError(
                 f"Failed to find closing brackets for symbol beginning at position {sym_begin}, entry {entry}"
             )
         symbol = entry[sym_begin + 2 : sym_end - 1]
@@ -84,6 +219,7 @@ def logged_subprocess(
     piped_input=None,
     stdout_log_level=logging.DEBUG,
     stderr_log_level=logging.DEBUG,
+    environ=None,
 ) -> int:
     # NOTES:
     # Option: Specifiy file_output to copy output to file in addition to logger
@@ -91,46 +227,73 @@ def logged_subprocess(
     # Logging errors as debug by default because many external apps (e.g. git)
     # write non-errors to stderr which generates bogus red-ink ERROR lines in
     # the log. The exit result must be used to trap real errors.
-    def log_line(tag, line, level, file_output):
+    def log_line(label, line, level, file_output):
         if level is not None:
-            logger.log(level, f"[{tag}] {line}")
+            logger.log(level, f"{label} {line}")
         if file_output:
             file_output.write(line + "\n")
 
+    logger.debug(f"Creating process with {command_line_args}")
     process = subprocess.Popen(
         command_line_args,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         stdin=subprocess.PIPE,
+        env=os.environ.copy() if environ is None else environ,
     )
+    logger.debug(f"Created process {process.pid}")
 
     if piped_input:
+        logger.debug(f"Communicate piped input to {process.pid}")
         out, err = process.communicate(piped_input)
+        logger.debug(f"Waiting for process result from {process.pid}")
         result = process.wait()
+        logger.debug(f"Process {process.pid} completed with result {result}")
+        logger.debug(f"Logging output for {process.pid}")
         for line in out.decode("utf-8").split("\n"):
-            log_line(tag, line, stdout_log_level, file_output)
+            log_line(f"[{process.pid}] [{tag}]", line, stdout_log_level, file_output)
         for line in err.decode("utf-8").split("\n"):
-            log_line(tag, line, stderr_log_level, file_output)
+            log_line(f"[{process.pid}] [{tag}]", line, stderr_log_level, file_output)
     else:
 
-        def reader(pipe, tag, level, file_output):
+        def reader(pipe, label, level, file_output):
+            logger.debug(f"{label} Enter reader for pipe {pipe}")
             for line in pipe:
                 try:
-                    log_line(tag, line.decode("utf-8").rstrip(), level, file_output)
+                    log_line(label, line.decode("utf-8").rstrip(), level, file_output)
                 except:
                     pass
+            logger.debug(f"{label} Leave reader for pipe {pipe}")
 
+        logger.debug("Creating threaded readers")
         tout = Thread(
-            target=reader, args=[process.stdout, tag, stdout_log_level, file_output]
+            target=reader,
+            args=[
+                process.stdout,
+                f"[{process.pid}] [{tag}]",
+                stdout_log_level,
+                file_output,
+            ],
         )
         terr = Thread(
-            target=reader, args=[process.stderr, tag, stderr_log_level, file_output]
+            target=reader,
+            args=[
+                process.stderr,
+                f"[{process.pid}] [{tag}]",
+                stderr_log_level,
+                file_output,
+            ],
         )
+        logger.debug("Starting threaded readers")
         tout.start()
         terr.start()
+        logger.debug(f"Waiting for process result from {process.pid}")
         result = process.wait()
+        logger.debug(f"Process {process.pid} completed with result {result}")
+        logger.debug("Joining threaded readers")
         tout.join()
         terr.join()
+    logger.debug(f"Returning result {result}")
     return result
 
 
@@ -159,10 +322,15 @@ def install_python_requirements(python_requirements: str) -> int:
 def load_module(module_file: str, module_name: str):
     if not module_name in sys.modules:
         logger.info(f"loading module {module_file} with module name {module_name}")
-        spec = importlib.util.spec_from_file_location(module_name, module_file)
-        _module = importlib.util.module_from_spec(spec)
-        sys.modules[module_name] = _module
-        spec.loader.exec_module(_module)
+        try:
+            spec = importlib.util.spec_from_file_location(module_name, module_file)
+            _module = importlib.util.module_from_spec(spec)
+            sys.modules[module_name] = _module
+            spec.loader.exec_module(_module)
+        except Exception as e:
+            raise SSFExceptionApplicationModuleError(
+                f"Failure loading {module_file}."
+            ) from e
     return sys.modules[module_name]
 
 
@@ -183,6 +351,8 @@ def build_file_list(
     glob_inclusions: List[str],
     glob_exclusions: List[str] = [],
     always: List[str] = [],
+    warn_on_empty_inclusions: bool = True,
+    warn_on_empty_exclusions: bool = True,
 ):
     """
     Build a file list from src_dir.
@@ -209,28 +379,50 @@ def build_file_list(
         files_include = []
         files_exclude = []
         for g in glob_inclusions:
-            files_include.extend(
-                [g for g in glob.glob(g, recursive=True) if os.path.isfile(g)]
-            )
+            found = [
+                os.path.abspath(f)
+                for f in glob.glob(g, recursive=True)
+                if os.path.isfile(f)
+            ]
+            if len(found) == 0:
+                if warn_on_empty_inclusions:
+                    logger.warning(f"No matching files found for inclusions '{g}'")
+            else:
+                files_include.extend(found)
         for g in glob_exclusions:
-            files_exclude.extend(
-                [g for g in glob.glob(g, recursive=True) if os.path.isfile(g)]
-            )
+            found = [
+                os.path.abspath(f)
+                for f in glob.glob(g, recursive=True)
+                if os.path.isfile(f)
+            ]
+            if len(found) == 0:
+                if warn_on_empty_exclusions:
+                    logger.warning(f"No matching files found for exclusions '{g}'")
+            else:
+                files_exclude.extend(found)
+        files_always = [os.path.abspath(a) for a in always]
 
-        files = sorted(list((set(files_include) - set(files_exclude)) | set(always)))
+        logger.debug(f"files_include={files_include}")
+        logger.debug(f"files_exclude={files_exclude}")
+        logger.debug(f"files_always={files_always}")
+
+        files = sorted(
+            list((set(files_include) - set(files_exclude)) | set(files_always))
+        )
 
         root_src_dir = None
 
         # Establish the root_src_dir with the discovered highest level src directory.
         # i.e. Find the common path given set of absolute paths.
-        abs_files = []
-        for f in files:
-            abs_files.append(os.path.abspath(f))
-        if len(abs_files):
-            root_src_dir = os.path.commonpath(abs_files)
+        # abs_files = []
+        # for f in files:
+        #    abs_files.append(os.path.abspath(f))
+        if len(files):
+            root_src_dir = os.path.commonpath(files)
 
     # Return root and files.
-    return src_dir, root_src_dir, abs_files
+    logger.debug(f"src_dir {src_dir}, root_src_dir {root_src_dir}, files {files}")
+    return src_dir, root_src_dir, files
 
 
 def get_default_ipaddr():
@@ -239,7 +431,7 @@ def get_default_ipaddr():
             f"Get IP", ["ip", "route", "show"], file_output=capture
         )
         if exit_code:
-            raise ValueError(f"Get IP errored {exit_code}")
+            raise SSFExceptionNetworkError(f"Get IP errored ({exit_code})")
         capture.seek(0)
         capture = capture.readlines()
         # Get device from default route:
@@ -369,3 +561,21 @@ def ipu_count_ok(ssf_config: SSFConfig, step_name: str) -> bool:
 
     logger.error(msg)
     return False
+
+
+def get_endpoints_gen_module_path(api_name):
+    return os.path.abspath(
+        os.path.join(os.path.dirname(__file__), f"generate_endpoints_{api_name}.py")
+    )
+
+
+def get_supported_apis():
+    return [API_FASTAPI, API_GRPC]
+
+
+def object_to_ascii(obj):
+    return base64.b64encode(pickle.dumps(obj)).decode("ascii")
+
+
+def ascii_to_object(ascii):
+    return pickle.loads(base64.b64decode(ascii.encode("ascii")))

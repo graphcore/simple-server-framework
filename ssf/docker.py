@@ -99,7 +99,7 @@ def start(
             if exit_code:
                 if logger:
                     logger.error(
-                        f"gc-docker run for {application_id} {package_tag} errored {exit_code}"
+                        f"gc-docker run for {application_id} {package_tag} errored ({exit_code})"
                     )
                 return False
         else:
@@ -111,7 +111,7 @@ def start(
             if exit_code:
                 if logger:
                     logger.error(
-                        f"docker run for {application_id} {package_tag} errored {exit_code}"
+                        f"docker run for {application_id} {package_tag} errored ({exit_code})"
                     )
                 return False
 
@@ -134,7 +134,7 @@ def remove(application_id: str, logger=None) -> bool:
         )
         if exit_code:
             if logger:
-                logger.error(f"docker stop for {application_id} errored {exit_code}")
+                logger.error(f"docker stop for {application_id} errored ({exit_code})")
             return False
 
         output.seek(0)
@@ -156,7 +156,7 @@ def stop(application_id: str, logger=None) -> bool:
         )
         if exit_code:
             if logger:
-                logger.error(f"docker stop for {application_id} errored {exit_code}")
+                logger.error(f"docker stop for {application_id} errored ({exit_code})")
             return False
 
         output.seek(0)
@@ -203,7 +203,7 @@ def wait_ready_from_logs(
             if exit_code:
                 if logger:
                     logger.error(
-                        f"docker logs for {application_id} errored {exit_code}"
+                        f"docker logs for {application_id} errored ({exit_code})"
                     )
                 return False
 
@@ -235,6 +235,6 @@ def log(application_id: str, logger) -> bool:
     with tempfile.NamedTemporaryFile(mode="w+t") as log_output:
         exit_code = logged_subprocess("docker logs", ["docker", "logs", application_id])
         if exit_code:
-            logger.error(f"docker logs for {application_id} errored {exit_code}")
+            logger.error(f"docker logs for {application_id} errored ({exit_code})")
             return False
         return True

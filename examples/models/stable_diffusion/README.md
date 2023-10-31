@@ -8,15 +8,15 @@ Note however, if `package` is subsequently issued, then the resultant image will
 
 # Licensing
 
-This example uses libraries from HuggingFace and the Stable Diffusion 2 model from Stability AI.
+This example uses libraries from Hugging Face and the Stable Diffusion 2 model from Stability AI.
 
-## Huggingface
+## Hugging Face
 
-Apache License, Version 2.0, January 2004
+Apache License, Version 2.0
 
 https://github.com/huggingface/diffusers/blob/main/LICENSE
 
-Apache License, Version 2.0, January 2004
+Apache License, Version 2.0
 
 https://github.com/huggingface/optimum-graphcore/blob/main/LICENSE
 
