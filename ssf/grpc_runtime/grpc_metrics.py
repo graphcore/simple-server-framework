@@ -9,7 +9,7 @@ from starlette.datastructures import Headers
 from starlette.requests import Request
 from starlette.responses import Response
 
-from ssf.common_runtime.common import (
+from ssf.application_interface.runtime_settings import (
     HEADER_METRICS_DISPATCH_LATENCY,
     HEADER_METRICS_REQUEST_LATENCY,
 )

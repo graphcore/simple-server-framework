@@ -11,7 +11,7 @@ application:
   artifacts: []
 
   dependencies:
-    python: numpy
+    python: numpy, requests
 
   package:
     inclusions: []

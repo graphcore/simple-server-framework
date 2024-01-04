@@ -34,6 +34,21 @@ def test_package_with_req_list():
     assert result == RESULT_OK
 
 
+@pytest.mark.slow
+def test_package_with_req_mix():
+    result, stdout, stderr = run_subprocess(
+        [
+            "gc-ssf",
+            "--config",
+            "tests/app_usecases/req_mix.yaml",
+            "init",
+            "build",
+            "package",
+        ]
+    )
+    assert result == RESULT_OK
+
+
 @pytest.mark.fast
 def test_self_package():
     result, stdout, stderr = run_subprocess(

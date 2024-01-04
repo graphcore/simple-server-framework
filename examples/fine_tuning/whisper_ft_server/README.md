@@ -7,8 +7,8 @@ It is made to handle one fine-tuning job at a time and provide features such as 
 - config.yaml : SSF config file
 - whisper_ft_app.py : Main SSF APP implementation
 - whisper_ft_utils.py : Utility functions for whisper finetuning
-- ft_interface.py : Contains FineTuningInterface class, define an interface for fine-tuning server.
-                can be reused for other fine-tuning project.
+- ft_interface.py : Contains the FineTuningInterface class, used to define an interface for a fine-tuning server.  
+  This interface can be reused for other fine-tuning projects.
 
 # Licensing
 
@@ -34,16 +34,16 @@ https://huggingface.co/openai/whisper-small/tree/main
 
 Just use SSF normally to run/deploy this example.\
 
-- This example uses Hugging Face hub features, you may want to log in with the Hugging Face CLI beforehand or by setting the environment variable `HUGGING_FACE_HUB_TOKEN`.
-- This example does not support grpc (do not use it with `--api grpc`)
+- This example uses Hugging Face Hub features. To use this example you will either need to be logged in with the Hugging Face CLI or have set set the environment variable `HUGGING_FACE_HUB_TOKEN`.
+- This example does not support gRPC (do not use it with `--api grpc`)
 - This example does not support replication (do not use `--replicate-application` or `--replicate-server`)
 
 
 # API
 The main app `WhisperFTApplication` inherits from `FineTuningInterface` which defines a specific API.
 
-This interface allows you to build a single endpoint relying on 1 input parameters and 1 output: `task`(input) and `response`(output)
-They must be defined in SSF config file `config.yaml`:
+This interface allows you to build a single endpoint relying on one input parameter and one output parameter: `task`(input) and `response`(output).
+They must be defined in the SSF config file `config.yaml`:
 
 ```yaml
 endpoints:
@@ -54,14 +54,14 @@ endpoints:
       - id: task
         type: String
         desc: |
-          One of the following task {"dataset", "train", "eval", "test", "save", "status"}.
+          One of the following tasks {"dataset", "train", "eval", "test", "save", "status"}.
           (Not executed if status is "Busy")
           Usage:
             dataset: process the dataset
             train : start finetuning job
             eval : start eval job
             test : test the model
-            save : upload model checkpoint to HF hub
+            save : upload model checkpoint to Hugging Face Hub
             status : return status string
 
     outputs:
@@ -115,7 +115,7 @@ These arguments and their default values are the following:
 # FineTuningInterface usage
 
 The class `FineTuningInterface` is a child class of `SSFApplicationInterface`. It defines a generic fine-tuning API and it comes with a pre-implemented behaviour.
-The following abstract methods are let to the user app class to implement when inheriting:
+The following abstract methods are left to the user app class to implement when inheriting:
 
 ```python
 @abstractmethod
@@ -188,7 +188,7 @@ def status(self, status_msg: str, params: dict, logs_dict: dict) -> str:
 -> The `dataset` task must be called before `train` or `eval` task to initialises the datasets.
 Otherwise the tasks will be ignored and the error will be written in `status_msg`
 
-- A dictionary (passed as `logs_dict` in all the previous method) is part of the state. It can be used to keep track of some metrics during task execution and key/values can be used by the method `response`.
+- A dictionary (passed as `logs_dict` in all the previous methods) is part of the state. It can be used to keep track of some metrics during task execution and key-values can be returned in the method `response`.
 
 
 
@@ -247,7 +247,7 @@ Note: The model will take time to compile the very first time you run it, but it
   "parameters": {}
 }
 ```
-This will return our custom status message (with the training metrics!), for insance:
+This will return our custom status message (with the training metrics), for example:
 Status request, response body example:
 ```json
 {
@@ -271,11 +271,11 @@ When implementing the Whisper example, some choice were made to keep the app sim
 (None of these are enforced by the `FineTuningInterface`)
 
 In this example the `WhisperFTApplication` instance keeps a `trainer` object as an internal state:
-The `trainer` object contains the model all its associated training state.
+The `trainer` object contains the model and all its associated training state.
 
 Only one model is kept at a time:\
-When the API calls `train`, any previous `trainer` and associated model are discarded. A new trainer and model are instanciated and fine-tune.\
+When the API calls `train`, any previous `trainer` and associated model are discarded. A new trainer and model are instanciated and fine-tuned.\
 
 When the API calls `eval`, the model used for eval is the fine-tuned model. If `train` wasn't called yet, a new trainer is instanciated and the evaluation runs on the model with its initial weights. This way, we can compare the evaluation score before and after fine-tuning.\
 
-When the API calls `save`, the model checkpoint is pushed to Hugging Face hub. The machine needs to be authentificated via Hugging Face CLI to do so. If no model was fine-tuned nothing happens.
+When the API calls `save`, the model checkpoint is pushed to Hugging Face Hub. The machine needs to be authentificated via huggingface CLI to do so. If no model was fine-tuned nothing happens.

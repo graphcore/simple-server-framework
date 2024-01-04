@@ -7,7 +7,7 @@ from prometheus_client import start_http_server
 from prometheus_fastapi_instrumentator import Instrumentator, metrics
 from starlette.datastructures import MutableHeaders
 
-from ssf.common_runtime.common import HEADER_METRICS_REQUEST_LATENCY
+from ssf.application_interface.runtime_settings import HEADER_METRICS_REQUEST_LATENCY
 from ssf.common_runtime.metrics import (
     get_ssf_custom_metrics,
     get_default_custom_metrics,

@@ -32,7 +32,7 @@ class TestsImplicitBuildAndTest(utils.TestClient):
         self.wait_ready = False
 
     def test_main(self):
-        self.wait_process_exit(timeout=300)
+        self.wait_process_exit()
         assert not self.process_is_running()
         assert self.server_stopped()
         assert self.get_return_code() == RESULT_OK
@@ -50,7 +50,6 @@ class TestsImplicitBuilderReplicateApp(utils.TestClient):
     def test_main(self):
         assert self.is_ready
         assert self.is_string_in_logs("Dispatcher ready")
-
         # Force stop.
         self.stop_process()
         assert not self.process_is_running()
@@ -58,7 +57,7 @@ class TestsImplicitBuilderReplicateApp(utils.TestClient):
         assert self.get_return_code() == RESULT_OK
 
     def test_num_workers_ok(self):
-        assert len(self.workers_pid) == 2
+        assert len(self.workers_pid) == 2, f"Worker pids {self.workers_pid}"
 
 
 @pytest.mark.fast
@@ -69,7 +68,7 @@ class TestsConfigImplicitBuilder(utils.TestClient):
         self.wait_ready = False
 
     def test_main(self):
-        self.wait_process_exit(timeout=300)
+        self.wait_process_exit()
         assert not self.process_is_running()
         assert self.server_stopped()
         assert self.get_return_code() == RESULT_OK
@@ -89,7 +88,7 @@ class TestsConfigExplicitBuilder(utils.TestClient):
         self.wait_ready = False
 
     def test_main(self):
-        self.wait_process_exit(timeout=300)
+        self.wait_process_exit()
         assert not self.process_is_running()
         assert self.server_stopped()
         assert self.get_return_code() == RESULT_OK

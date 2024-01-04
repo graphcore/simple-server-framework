@@ -6,7 +6,6 @@ import model
 @pytest.mark.slow
 @pytest.mark.ipu
 @pytest.mark.model
-@pytest.mark.skip(reason="Temporary skip")
 class TestsStableDiffusion(model.TestModel):
     def configure(self):
         self.deploy_name = "test_model_stable_diffusion"

@@ -107,7 +107,7 @@ class TestsErrorTestInterfacePrecursor(utils.TestClient):
     def test_precursor(self):
         # This test issues 'package' to completion which can take some time on a clean system
         # when all layers need to be pulled/cached.
-        self.wait_process_exit(timeout=300)
+        self.wait_process_exit()
         assert not self.process_is_running()
         assert self.server_stopped()
         assert self.get_return_code() == RESULT_OK
@@ -122,7 +122,7 @@ class TestsErrorTestInterfaceMissingClassFunctions(utils.TestClient):
         self.ssf_commands = ["test"]
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_APPLICATION_MODULE_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -145,7 +145,7 @@ class TestsErrorTestInterfaceMissingNonClassFunctions(utils.TestClient):
         self.ssf_commands = ["test"]
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_APPLICATION_MODULE_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -167,7 +167,7 @@ class TestsErrorPackageSkipBuild(utils.TestClient):
         # This test issues 'package' to completion (at least for gRPC)
         # which can take some time on a clean system
         # when all layers need to be pulled/cached.
-        self.wait_process_exit(timeout=300)
+        self.wait_process_exit()
         # Expect RESULT_PACKAGE_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -189,7 +189,7 @@ class TestsErrorPackageInclusionsExclusions(utils.TestClient):
     def test_exit_after_success(self):
         # This test issues 'package' to completion which can take some time on a clean system
         # when all layers need to be pulled/cached.
-        self.wait_process_exit(timeout=300)
+        self.wait_process_exit()
         # Expect RESULT_OK but some logging to warn about empty inclusion/exclusion matches.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -211,7 +211,7 @@ class TestsErrorPackageBadDockerRun(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_PACKAGING_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -233,7 +233,7 @@ class TestsErrorPublishDockerBogusLogin(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_DOCKER_SERVER_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -255,7 +255,7 @@ class TestsErrorPublishDockerBogusPackage(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_DOCKER_SERVER_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -277,7 +277,7 @@ class TestsErrorDeployGcoreMissingTarget(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_GCORE_DEPLOYMENT_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -303,7 +303,7 @@ class TestsErrorDeployGcoreBogusPackage(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_GCORE_DEPLOYMENT_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -332,7 +332,7 @@ class TestsErrorDeployPaperspaceMissingProject(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_PAPERSPACE_DEPLOYMENT_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -359,7 +359,7 @@ class TestsErrorDeployPaperspaceMissingAPIKeyArg(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_PAPERSPACE_DEPLOYMENT_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -388,7 +388,7 @@ class TestsErrorDeployPaperspaceMissingAPIKeyEnv(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_PAPERSPACE_DEPLOYMENT_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -419,7 +419,7 @@ class TestsErrorDeployPaperspaceFailAPI(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_PAPERSPACE_DEPLOYMENT_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -447,7 +447,7 @@ class TestsErrorAddSshKeyEnv(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_SSH_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -465,7 +465,7 @@ class TestsErrorInitGitConfig(utils.TestClient):
         self.wait_ready = False
 
     def test_exit_after_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_GIT_REPO_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()

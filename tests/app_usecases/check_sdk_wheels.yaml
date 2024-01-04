@@ -1,0 +1,30 @@
+# Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+ssf_version: 0.0.1
+
+application:
+  id: check-sdk-package
+  name: Test API
+  desc: A very simple test API
+  version: 1.0
+  module: check_sdk_wheels.py
+  ipus: 0
+  trace: True
+  artifacts: []
+
+  dependencies:
+      poplar: ["3.3.0"]
+      poplar_wheels: poptorch,poptorch_geometric,tensorflow,ipu_tensorflow_addons,keras
+
+endpoints:
+  - id: Test1
+    version: 1
+    desc: This is my simple application interface
+    inputs:
+      - id: x
+        type: Integer
+        desc: An integer value
+
+    outputs:
+      - id: response
+        type: String
+        desc: OK

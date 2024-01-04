@@ -1,8 +1,8 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
 from fastapi import APIRouter, status, Response
 
-from ssf.common_runtime.config import settings
-from ssf.common_runtime.dispatcher import Applications
+from ssf.application_interface.runtime_settings import settings
+from ssf.common_runtime.dispatcher import Application
 import logging
 
 logger = logging.getLogger()
@@ -12,14 +12,14 @@ HEALTH_ROUTE_STARTUP = "/startup"
 HEALTH_ROUTE_READY = "/ready"
 HEALTH_ROUTE_LIVE = "/live"
 
-applications: Applications = None
+application: Application = None
 router = APIRouter(prefix=HEALTH_ROUTE_PREFIX, tags=["Health"])
 
 
-def initialize(app: Applications):
-    global applications
-    applications = app
-    logger.debug(f"router:Health Initialized with applications={applications}")
+def initialize(app: Application):
+    global application
+    application = app
+    logger.debug(f"router:Health Initialized with applications={application}")
 
 
 # As soon as we start the server, the endpoints are ready to be read
@@ -33,7 +33,7 @@ def startup_check():
 @router.get(HEALTH_ROUTE_READY, status_code=status.HTTP_200_OK)
 def readiness_check(response: Response):
     message = "Readiness check succeeded."
-    if not applications.is_ready():
+    if not application.is_ready():
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
         message = "Readiness check failed."
     return {"message": message}
@@ -44,7 +44,7 @@ def readiness_check(response: Response):
 @router.get(HEALTH_ROUTE_LIVE, status_code=status.HTTP_200_OK)
 def liveness_check(response: Response):
     message = "Liveness check succeeded."
-    if not applications.is_alive():
+    if not application.is_alive():
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
         message = "Liveness check failed."
     return {"message": message}

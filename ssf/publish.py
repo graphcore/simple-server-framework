@@ -2,13 +2,12 @@
 import logging
 from typing import List
 
-from ssf.utils import logged_subprocess, build_file_list, temporary_cwd
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import *
+
+from ssf.utils import logged_subprocess
 from ssf.version import VERSION
 from ssf.package import get_package_name_and_tag
-from ssf.config import SSFConfig
-from ssf.results import *
-from dataclasses import dataclass
-from pathlib import Path
 from shutil import rmtree
 
 logger = logging.getLogger("ssf")

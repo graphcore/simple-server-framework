@@ -5,7 +5,10 @@ from ssf.grpc_runtime.server import gRPCserver
 
 import grpc
 
-from ssf.results import SSFExceptionGRPCServerError, SSFExceptionArgumentsError
+from ssf.application_interface.results import (
+    SSFExceptionGRPCServerError,
+    SSFExceptionArgumentsError,
+)
 
 logger = logging.getLogger("ssf")
 

@@ -4,11 +4,11 @@ import logging
 import time
 import grpc
 
-from ssf.common_runtime.common import (
+from ssf.application_interface.runtime_settings import (
     HEADER_METRICS_DISPATCH_LATENCY,
     HEADER_METRICS_REQUEST_LATENCY,
 )
-from ssf.results import (
+from ssf.application_interface.results import (
     SSFExceptionGRPCAppConfigError,
     SSFExceptionGRPCRequestError,
     SSFExceptionGRPCSSFError,
@@ -27,9 +27,9 @@ logger = logging.getLogger("ssf")
 
 
 class GRPCService(grpc_predict_v2_pb2_grpc.GRPCInferenceServiceServicer):
-    def __init__(self, applications) -> None:
-        self.applications = applications
-        self.application_ids = self.applications.get_applications_ids()
+    def __init__(self, application) -> None:
+        self.application = application
+        self.application_id = self.application.get_application_id()
         self.type_check()
         super().__init__()
 
@@ -39,18 +39,18 @@ class GRPCService(grpc_predict_v2_pb2_grpc.GRPCInferenceServiceServicer):
         crash of application during runtime when responses are dynamically
         created.
         """
-        for app_config in self.applications.ssf_config_list:
-            for endpoint in app_config.endpoints:
-                for app_input in endpoint.inputs:
-                    if not is_type_supported(app_input, False):
-                        raise SSFExceptionGRPCAppConfigError(
-                            f"Input type {app_input.dtype} is not supported."
-                        )
-                for app_output in endpoint.outputs:
-                    if not is_type_supported(app_output, True):
-                        raise SSFExceptionGRPCAppConfigError(
-                            f"Output type {app_output.dtype} is not supported."
-                        )
+        app_config = self.application.ssf_config
+        for endpoint in app_config.endpoints:
+            for app_input in endpoint.inputs:
+                if not is_type_supported(app_input, False):
+                    raise SSFExceptionGRPCAppConfigError(
+                        f"Input type {app_input.dtype} is not supported."
+                    )
+            for app_output in endpoint.outputs:
+                if not is_type_supported(app_output, True):
+                    raise SSFExceptionGRPCAppConfigError(
+                        f"Output type {app_output.dtype} is not supported."
+                    )
 
     def grpc_call_wrapper(func):
         """Helper decorator to properly report exceptions.
@@ -80,7 +80,7 @@ class GRPCService(grpc_predict_v2_pb2_grpc.GRPCInferenceServiceServicer):
     def ModelInfer(self, request, context):
         request.model_name = self.get_application_name(request.model_name)
 
-        if self.applications.dispatcher[request.model_name].is_ready():
+        if self.application.dispatcher.is_ready():
             return self._model_infer_handler(request, context)
         else:
             context.set_details(f"Model {request.model_name} not ready.")
@@ -91,13 +91,13 @@ class GRPCService(grpc_predict_v2_pb2_grpc.GRPCInferenceServiceServicer):
     def ModelReady(self, request, context):
         app_name = self.get_application_name(request.name)
         return grpc_predict_v2_pb2.ModelReadyResponse(
-            ready=self.applications.dispatcher[app_name].is_ready()
+            ready=self.application.dispatcher.is_ready()
         )
 
     @grpc_call_wrapper
     def ServerReady(self, request, context):
         return grpc_predict_v2_pb2.ServerReadyResponse(
-            ready=self.applications.is_ready()
+            ready=self.application.is_ready()
         )
 
     @grpc_call_wrapper
@@ -110,8 +110,7 @@ class GRPCService(grpc_predict_v2_pb2_grpc.GRPCInferenceServiceServicer):
         return grpc_predict_v2_pb2.ServerMetadataResponse(name=NAME, version=VERSION)
 
     def _model_infer_handler(self, request, context):
-        application_idx = self.application_ids.index(request.model_name)
-        application_config = self.applications.ssf_config_list[application_idx]
+        application_config = self.application.ssf_config
 
         # check what endpoint is targeted
         app_endpoint_idx = self.get_application_endpoint_idx(
@@ -144,10 +143,10 @@ class GRPCService(grpc_predict_v2_pb2_grpc.GRPCInferenceServiceServicer):
             request_params_dict[handler.get_input_id()] = handler.get_input()
 
         # process requests
-        self.applications.dispatcher[request.model_name].queue_request(
+        self.application.dispatcher.queue_request(
             (request_params_dict, request_meta_dict)
         )
-        results = self.applications.dispatcher[request.model_name].get_result()
+        results = self.application.dispatcher.get_result()
 
         response = grpc_predict_v2_pb2.ModelInferResponse()
         response.model_name = request.model_name
@@ -169,29 +168,32 @@ class GRPCService(grpc_predict_v2_pb2_grpc.GRPCInferenceServiceServicer):
             response.parameters[HEADER_METRICS_DISPATCH_LATENCY].string_param = str(
                 dispatch_latency
             )
-            logger.info(f"> {request.model_name} results {results.keys()}")
+
+            if application_config.application.trace != False:
+                logger.info(f"> {request.model_name} results {results.keys()}")
 
         else:
             dispatch_latency = "NA"
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
 
-        logger.info(f"> {request.model_name} leave ({dispatch_latency})")
+        if application_config.application.trace != False:
+            logger.info(f"> {request.model_name} leave ({dispatch_latency})")
 
         return response
 
     def get_application_name(self, name):
-        if not name and len(self.application_ids) == 1:
-            return self.application_ids[0]
+        if not name:
+            return self.application_id
 
-        if name in self.application_ids:
+        if name == self.application_id:
             return name
 
-        available_applications = f"Available models: {' '.join(self.application_ids)}"
+        available_application = f"Available model: {' '.join(self.application_id)}"
 
         if name:
-            error_str = f"Unsupported model {name}. {available_applications}"
+            error_str = f"Unsupported model {name}. {available_application}"
         else:
-            error_str = f"Model name not set. {available_applications}"
+            error_str = f"Model name not set. {available_application}"
 
         raise SSFExceptionGRPCRequestError(error_str)
 

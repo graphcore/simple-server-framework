@@ -12,7 +12,7 @@ application:
   max_batch_size: 4
 
   dependencies:
-    python: numpy
+    python: numpy, requests
 
   package:
     inclusions: ["my_application.py"]

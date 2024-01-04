@@ -11,9 +11,9 @@ from grpc_reflection.v1alpha import reflection
 
 from ssf.common_runtime.callbacks import notify_error_callback
 
-from ssf.common_runtime.config import settings
+from ssf.application_interface.runtime_settings import settings
 
-from ssf.common_runtime.dispatcher import Applications
+from ssf.common_runtime.dispatcher import Application
 from ssf.results import SSFExceptionArgumentsError
 
 from ssf.utils import API_GRPC, ascii_to_object
@@ -82,20 +82,20 @@ class gRPCserver:
         self.max_connections = max_connections
         self.api_key = api_key
 
-        self.applications = Applications(
+        self.application = Application(
             settings=settings,
-            ssf_config_list=[self.ssf_config],
+            ssf_config=self.ssf_config,
             notify_error_callback=notify_error_callback,
         )
 
         self.startup_thread = None
 
-    def run_applications(self):
-        # Create the applications managed group.
+    def run_application(self):
+        # Create the application managed group.
         # A single application (=> single dispatcher) from our single ssf_config.
         self.logger.info("> Lifespan start")
         self.logger.info("Lifespan start : start application (threaded)")
-        self.startup_thread = Thread(target=self.applications.start)
+        self.startup_thread = Thread(target=self.application.start)
         self.startup_thread.start()
 
     def run_server(self):
@@ -147,7 +147,7 @@ class gRPCserver:
 
         # For GRPC all endpoints will be generated in the same file
         grpc_predict_v2_pb2_grpc.add_GRPCInferenceServiceServicer_to_server(
-            GRPCService(self.applications), self.server
+            GRPCService(self.application), self.server
         )
         SERVICE_NAMES = (
             grpc_predict_v2_pb2.DESCRIPTOR.services_by_name[
@@ -170,7 +170,7 @@ class gRPCserver:
         self.logger.debug(f"ssf_config={self.ssf_config}")
 
         self.run_server()
-        self.run_applications()
+        self.run_application()
 
         try:
             self.server.wait_for_termination()
@@ -178,14 +178,14 @@ class gRPCserver:
             self.logger.info(f"> gRPC server stopped by user")
             pass
 
-        self.applications.stop()
+        self.application.stop()
 
         self.logger.info("> Lifespan stop")
         if self.startup_thread.is_alive():
             self.logger.info("Lifespan stop : joining startup thread")
             self.startup_thread.join()
             self.logger.info("Lifespan stop : stop application")
-            self.applications.stop()
+            self.application.stop()
         else:
             self.logger.info("Lifespan stop : stop application")
-            self.applications.stop()
+            self.application.stop()

@@ -20,11 +20,12 @@ COPY src ./src
 
 COPY src/ssf/LICENSE ./licenses/ssf/LICENSE
 
-
 RUN pip3 install --upgrade pip
-RUN pip3 install --no-cache-dir -r src/ssf_package_requirements.txt
 RUN pip3 install -e ./src
 
+# pre-build app venv
+RUN python -m venv ./src/ssf-{{config.application.id}}-venv
+RUN source ./src/ssf-{{config.application.id}}-venv/bin/activate && pip install -r ./src/ssf_package_requirements.txt
 
 # Base image information
 LABEL "ai.graphcore.ssf.base.image"="{{baseimage}}"

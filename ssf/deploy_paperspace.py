@@ -7,9 +7,13 @@ from typing import List, Tuple
 import sys
 import shutil
 
-from ssf.config import SSFConfig
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import (
+    RESULT_OK,
+    SSFExceptionPaperspaceDeploymentError,
+)
+
 from ssf.utils import logged_subprocess
-from ssf.results import RESULT_OK, SSFExceptionPaperspaceDeploymentError
 
 logger = logging.getLogger("ssf")
 

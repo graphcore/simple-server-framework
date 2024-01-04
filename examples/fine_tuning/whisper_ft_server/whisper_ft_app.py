@@ -1,6 +1,5 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
 # Basic Whisper fine-tuning app for SSF based on optimum-graphcore/notebooks/whisper_finetuning.ipynb example
-from pip_post_install import install
 import logging
 import json
 from typing import Any, Tuple

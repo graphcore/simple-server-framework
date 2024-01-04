@@ -2,8 +2,9 @@
 import logging
 import os
 import uvicorn
+import ssl
 
-from ssf.results import SSFExceptionUvicornError
+from ssf.application_interface.results import *
 
 logger = logging.getLogger("ssf")
 
@@ -22,6 +23,15 @@ def run(args):
     app_dir = str(os.path.dirname(os.path.abspath(__file__)))
     logger.info(f"> Running Uvicorn")
 
+    ssl_certfile = None
+    ssl_keyfile = None
+    if args.enable_ssl:
+        logger.info("SSL is enabled")
+        ssl_certfile = args.ssl_certificate_file
+        ssl_keyfile = args.ssl_key_file
+        logger.debug(f"SSL certfile {ssl_certfile}")
+        logger.debug(f"SSL keyfile {ssl_keyfile}")
+
     try:
         uvicorn.run(
             "server:app",
@@ -30,6 +40,8 @@ def run(args):
             port=args.port,
             workers=args.fastapi_replicate_server,
             log_config=None,
+            ssl_certfile=ssl_certfile,
+            ssl_keyfile=ssl_keyfile,
         )
     except BaseException as e:
         raise SSFExceptionUvicornError from e

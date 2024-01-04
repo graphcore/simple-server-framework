@@ -6,7 +6,7 @@ from prometheus_fastapi_instrumentator import metrics
 from prometheus_client import REGISTRY, Histogram
 from prometheus_fastapi_instrumentator.metrics import Info, _is_duplicated_time_series
 
-from ssf.common_runtime.common import HEADER_METRICS_DISPATCH_LATENCY
+from ssf.application_interface.runtime_settings import HEADER_METRICS_DISPATCH_LATENCY
 from ssf.results import SSFExceptionNotImplementedError
 from ssf.utils import API_FASTAPI, API_GRPC
 

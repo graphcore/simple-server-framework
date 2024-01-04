@@ -3,8 +3,9 @@
 import logging
 import os
 
+from ssf.application_interface.results import SSFExceptionSshError
+
 from ssf.utils import logged_subprocess
-from ssf.results import SSFExceptionSshError
 
 logger = logging.getLogger()
 

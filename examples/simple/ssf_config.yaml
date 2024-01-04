@@ -7,6 +7,8 @@ application:
   desc: A very simple test API
   version: 1.0
   module: my_application.py
+  dependencies:
+    python: requests
   ipus: 0
   trace: True
 

@@ -5,7 +5,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from tempfile import NamedTemporaryFile
 
-from ssf.results import (
+from ssf.application_interface.results import (
     SSFExceptionGRPCAppConfigError,
     SSFExceptionGRPCRequestError,
 )

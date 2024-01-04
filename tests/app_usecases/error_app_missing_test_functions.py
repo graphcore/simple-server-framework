@@ -1,8 +1,11 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
 import logging
 
-from ssf.application import SSFApplicationInterface, SSFApplicationTestInterface
-from ssf.results import *
+from ssf.application_interface.application import (
+    SSFApplicationInterface,
+    SSFApplicationTestInterface,
+)
+from ssf.application_interface.results import *
 
 logger = logging.getLogger()
 

@@ -5,10 +5,21 @@ import os
 import sys
 from packaging import version
 from prometheus_client import Histogram
-from ssf.common_runtime.common import PROMETHEUS_ENDPOINT, PROMETHEUS_BUCKETS
 from typing import Tuple
 
 sys.path.insert(len(sys.path), os.path.abspath(__file__))
+
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import *
+from ssf.application_interface.logger import (
+    init_global_logging,
+    set_default_logging_levels,
+    reset_log,
+)
+from ssf.application_interface.runtime_settings import (
+    PROMETHEUS_ENDPOINT,
+    PROMETHEUS_BUCKETS,
+)
 
 from ssf.init import init as ssf_init
 from ssf.build import build as ssf_build
@@ -18,8 +29,7 @@ from ssf.test import test as ssf_test
 from ssf.publish import publish as ssf_publish
 from ssf.deploy import deploy as ssf_deploy
 
-from ssf.utils import expand_str, ipu_count_ok, get_supported_apis, API_FASTAPI
-from ssf.logger import init_global_logging, set_default_logging_levels, reset_log
+from ssf.utils import expand_str, get_supported_apis, API_FASTAPI
 from ssf.version import (
     VERSION,
     ID,
@@ -32,9 +42,7 @@ from ssf.version import (
 from ssf.repo import clone as repo_clone
 from ssf.repo import paperspace_load_model as load_model
 from ssf.ssh import add_ssh_key
-from ssf.config import SSFConfig
 from ssf.load_config import ConfigGenerator
-from ssf.results import *
 
 DEFAULT_CONFIG = "ssf_config.yaml"
 REPO_ROOT = ".repo"
@@ -276,6 +284,99 @@ def run(cli_args: list):
         type=int,
         default=1,
         help="Number of application instances",
+    )
+
+    fastapi_op.add_argument(
+        "--enable-cors-middleware",
+        action="store_true",
+        help="Enable CORS middleware",
+    )
+
+    fastapi_op.add_argument(
+        "--cors-allow-origin-regex",
+        type=str,
+        default="http.*://(?:localhost|127\.0\.0\.1)(?::\d+)?",
+        help="Allow origin regex when CORS middleware is enabled.",
+    )
+
+    fastapi_op.add_argument(
+        "--cors-allow-credentials",
+        type=str,
+        default="True",
+        help="Allow credentials when CORS middleware is enabled.",
+    )
+
+    fastapi_op.add_argument(
+        "--cors-allow-methods",
+        type=str,
+        default="*",
+        help="Allowed methods when CORS middleware is enabled (comma-separated list).",
+    )
+
+    fastapi_op.add_argument(
+        "--cors-allow-headers",
+        type=str,
+        default="*",
+        help="Allowed headers when CORS middleware is enabled (comma-separated list).",
+    )
+
+    fastapi_op.add_argument(
+        "--cors-expose-headers",
+        type=str,
+        default="",
+        help="Exposed headers when CORS middleware is enabled (comma-separated list).",
+    )
+
+    fastapi_op.add_argument(
+        "--cors-max-age",
+        type=int,
+        default=600,
+        help="Maximum time in seconds for cached CORS reponses when CORS middleware is enabled.",
+    )
+
+    fastapi_op.add_argument(
+        "--enable-ssl",
+        action="store_true",
+        help="Enable Uvicorn SSL",
+    )
+
+    fastapi_op.add_argument(
+        "--ssl-certificate-file",
+        type=str,
+        default="ssl-cert.pem",
+        help="File path to SSL certificate when SSL middleware is enabled.",
+    )
+
+    fastapi_op.add_argument(
+        "--ssl-key-file",
+        type=str,
+        default="ssl-key.pem",
+        help="File path to SSL key when SSL middleware is enabled.",
+    )
+
+    fastapi_op.add_argument(
+        "--enable-session-authentication",
+        action="store_true",
+        help="Enable session authentication using HTTP Basic authentication.\n"
+        "You must use --session-authentication-module-file to also provide an `authorise_user()` implementation.",
+    )
+
+    fastapi_op.add_argument(
+        "--session-authentication-module-file",
+        type=str,
+        default="ssf/default_authentication.py",
+        help="Specify a session authentication module used for authentication of user login.\n"
+        "This must implement a function `authenticate_user(username: str, password: str)`.\n"
+        "This should return `None` if the username and password are not authorised, or\n"
+        "a 'user id' as string if the username and password are authorised\n"
+        "The default implementation declares a single test user with username `test` and password `123456`.",
+    )
+
+    fastapi_op.add_argument(
+        "--session-authentication-timeout",
+        type=int,
+        default=10080,
+        help="Session authentication timeout",
     )
 
     # User can select replication (of FastAPI server).
@@ -716,20 +817,18 @@ def run(cli_args: list):
             p = os.path.abspath(os.path.join(ssf_config.application.dir, p))
             add_sys_path(p)
 
+    unknown_commands = [c for c in commands if not c in SSF_COMMANDS]
+    if len(unknown_commands):
+        logger.warning(f"Ignoring unknown SSF commands {unknown_commands}")
+
     # Iterate known commands in sequence.
     for cmd_name in SSF_COMMANDS:
         if cmd_name in commands:
-            if not ipu_count_ok(ssf_config, cmd_name):
-                raise SSFExceptionUnmetRequirement(
-                    f"IPUs count does not match application requirements."
-                )
             ret = globals()[f"ssf_{cmd_name}"](ssf_config)
             if ret != RESULT_OK:
                 return ret
             commands = list(filter((cmd_name).__ne__, commands))
 
-    if len(commands):
-        logger.warning(f"Ignoring unknown SSF commands {commands}")
     return RESULT_OK
 
 

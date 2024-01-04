@@ -7,9 +7,12 @@ import os
 from typing import Tuple
 import tempfile
 
-from ssf.application import SSFApplicationInterface, SSFApplicationTestInterface
-from ssf.utils import get_ipu_count
-from ssf.results import *
+from ssf.application_interface.application import (
+    SSFApplicationInterface,
+    SSFApplicationTestInterface,
+)
+from ssf.application_interface.utils import get_ipu_count
+from ssf.application_interface.results import *
 
 logger = logging.getLogger("SD2")
 

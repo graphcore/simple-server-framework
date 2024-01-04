@@ -12,7 +12,7 @@ application:
   artifacts: ["../../complex_app/generated/*"]
 
   dependencies:
-    python: ~
+    python: requests
 
   package:
     inclusions: ["*.py", "../../complex_core/**", "../../complex_app/**"]

@@ -1,4 +1,8 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+# NOTE:
+# Do not import external packages in application_interface modules
+# to avoid introducing additional dependencies for the application.
+# Only import SSF modules that are also in application_interface.
 
 import logging
 from logging.handlers import QueueHandler
@@ -6,9 +10,9 @@ import sys
 import traceback
 import multiprocessing as mp
 import atexit
-from ssf.results import SSFExceptionInternalError
 
-ctx = mp.get_context("spawn")
+from ssf.application_interface.results import SSFExceptionInternalError
+
 default_logging_level_file = logging.DEBUG
 default_logging_level_stdout = logging.INFO
 
@@ -189,8 +193,8 @@ def init_global_logging():
     global listener
     global log_queue
     if log_queue is None or listener is None:
-        log_queue = ctx.Queue(5000)
-        listener = ctx.Process(
+        log_queue = mp.Queue()
+        listener = mp.Process(
             target=log_listener_process,
             args=(
                 log_queue,

@@ -1,9 +1,9 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
 import logging
-import os
-from ssf.application import SSFApplicationInterface
-from ssf.results import *
 import yaml
+
+from ssf.application_interface.application import SSFApplicationInterface
+from ssf.application_interface.results import *
 
 logger = logging.getLogger()
 

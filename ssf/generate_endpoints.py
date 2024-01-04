@@ -2,10 +2,9 @@
 import logging
 import os
 
-from .utils import get_supported_apis, load_module, get_endpoints_gen_module_path
-from .config import SSFConfig
-
-from ssf.results import SSFExceptionFrameworkResourceError
+from ssf.utils import get_supported_apis, load_module, get_endpoints_gen_module_path
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import SSFExceptionFrameworkResourceError
 
 logger = logging.getLogger("ssf")
 

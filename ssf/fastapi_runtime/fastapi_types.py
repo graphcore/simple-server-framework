@@ -3,8 +3,13 @@
 
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Any
-from ssf.config import SSFConfig, EndpointParam
-from ssf.results import SSFExceptionInternalError, SSFExceptionNotImplementedError
+
+from ssf.application_interface.config import SSFConfig, EndpointParam
+from ssf.application_interface.results import (
+    SSFExceptionInternalError,
+    SSFExceptionNotImplementedError,
+)
+
 
 # Create SSFType class for each SSFType we want to support.
 # Add the new SSFType (instance) to 'handlers' at the end.

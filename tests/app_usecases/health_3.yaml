@@ -12,7 +12,7 @@ application:
   artifacts: []
 
   dependencies:
-    python:
+    python: pyyaml==5.4.1
 
   package:
     inclusions: []

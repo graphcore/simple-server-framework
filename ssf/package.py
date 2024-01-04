@@ -5,11 +5,18 @@ import shutil
 import stat
 from typing import List
 
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import *
+
 from ssf.template import TemplateSymbolParser, expand_template
-from ssf.utils import logged_subprocess, build_file_list, temporary_cwd
-from ssf.config import SSFConfig
-from ssf.results import *
+from ssf.utils import (
+    logged_subprocess,
+    build_file_list,
+    temporary_cwd,
+    get_python_requirements,
+)
 from ssf.version import VERSION, ID, NAME
+from ssf.sdk_utils import get_poplar_sdk, get_poplar_wheels
 
 logger = logging.getLogger("ssf")
 
@@ -119,7 +126,7 @@ def package(ssf_config: SSFConfig):
             warn_on_empty_exclusions=False,
         )
         package_decl(
-            src_dir=os.path.abspath(os.path.join(ssf_dir, os.pardir)),
+            src_dir=os.path.abspath(ssf_dir),
             dst_dir=ssf_dst_dir,
             include=["LICENSE"],
             exclude=[],
@@ -127,7 +134,7 @@ def package(ssf_config: SSFConfig):
             warn_on_empty_exclusions=False,
         )
         package_decl(
-            src_dir=os.path.abspath(os.path.join(ssf_dir, os.pardir)),
+            src_dir=os.path.abspath(ssf_dir),
             dst_dir=os.path.join(ssf_dst_dir, os.pardir),
             include=["pyproject.toml", "README.md"],
             exclude=[],
@@ -152,16 +159,15 @@ def package(ssf_config: SSFConfig):
             # (even if they aren't added in package decls)
             app_config = os.path.basename(os.path.realpath(ssf_config.config_file))
             app_module = ssf_config.application.file
-            app_requirements = ssf_config.application.dependencies.get("python", None)
-            if not app_requirements or not ".txt" in app_requirements:
-                app_requirements = None
+
+            deps_requirement_files, deps_packages = get_python_requirements(ssf_config)
 
             # Always include these app default files.
             always = []
             always.append(app_config)
             always.append(app_module)
-            if app_requirements:
-                always.append(app_requirements)
+            for rf in deps_requirement_files:
+                always.append(rf)
 
             include = ssf_config.application.package.inclusions
             exclude = ssf_config.application.package.exclusions
@@ -205,18 +211,34 @@ def package(ssf_config: SSFConfig):
             # Gather Python requirements
             logger.info(f"> Gathering pip requirements")
             requirements_file = open(requirements_path, "a+")
-            python_dependencies = ssf_config.application.dependencies.get(
-                "python", None
+
+            # Normal python dependencies (requirement files and/or packages)
+            for rf in deps_requirement_files:
+                for line in open(os.path.join(app_dir, rf), "r").readlines():
+                    requirements_file.write(line)
+            for p in deps_packages:
+                requirements_file.write(p + "\n")
+
+            # Poplar SDK's Python wheels
+            poplar_wheels = ssf_config.application.dependencies.get(
+                "poplar_wheels", False
             )
-            if not python_dependencies is None:
-                if ".txt" in python_dependencies:
-                    for line in open(
-                        os.path.join(app_dir, python_dependencies), "r"
-                    ).readlines():
-                        requirements_file.write(line)
-                else:
-                    for r in python_dependencies.split(","):
-                        requirements_file.write(r + "\n")
+            wheels_pckg = os.path.join(package_src_dir, "whl")
+            if poplar_wheels:
+                sdk_path = get_poplar_sdk(ssf_config)
+                os.mkdir(wheels_pckg)
+
+                wheels, missing = get_poplar_wheels(poplar_wheels, sdk_path)
+                if len(missing):
+                    raise SSFExceptionInstallationError(
+                        f"Could not find .whl for {','.join(missing)} in {sdk_path}"
+                    )
+                for wheel in wheels:
+                    shutil.copy(wheel, wheels_pckg)
+                    wheel_basename = os.path.basename(wheel)
+                    requirements_file.write(
+                        os.path.join("src", "whl", wheel_basename) + "\n"
+                    )
             requirements_file.close()
 
         else:

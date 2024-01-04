@@ -13,14 +13,18 @@ from fastapi.responses import JSONResponse
 from starlette.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
     HTTP_403_FORBIDDEN,
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
 from ssf.common_runtime.common import *
+from ssf.application_interface.runtime_settings import *
+from ssf.fastapi_runtime.server_authentication import SESSION_KEY_TOKEN_PREFIX_CHARS
 from server import applications
 from server_security import router
 from server_security import get_api_key
+from server_authentication import get_session_key
 from pydantic import BaseModel
 
 logger = logging.getLogger('ssf')
@@ -44,6 +48,10 @@ class Inputs(BaseModel):
             "model": HTTPError,
             "description": "HTTPException thrown due to a bad request inputs.",
         },
+        HTTP_401_UNAUTHORIZED: {
+            "model": HTTPError,
+            "description": "HTTPException thrown due to invalid authentication.",
+        },
         HTTP_403_FORBIDDEN: {
             "model": HTTPError,
             "description": "HTTPException thrown due to invalid credentials.",
@@ -58,6 +66,7 @@ class Inputs(BaseModel):
 def run_{{endpoint.id}}_v{{endpoint.version}} (
     {{inputs_as_params}},
     api_key: APIKey = Depends(get_api_key),
+    session_key: APIKey = Depends(get_session_key),
 ):
     """
     {{endpoint.description}}
@@ -96,8 +105,13 @@ def run_{{endpoint.id}}_v{{endpoint.version}} (
             logger.debug(f"> {{config.application.name}} queue request request_params_dict={request_params_dict}")
             logger.debug(f"> {{config.application.name}} queue request request_meta_dict={request_meta_dict}")
 
-        applications.dispatcher["{{config.application.id}}"].queue_request((request_params_dict, request_meta_dict))
-        results = applications.dispatcher["{{config.application.id}}"].get_result()
+        try:
+            request_meta_dict["user_id"] = session_key[SESSION_KEY_TOKEN_PREFIX_CHARS:]
+        except:
+            pass
+
+        applications.dispatcher.queue_request((request_params_dict, request_meta_dict))
+        results = applications.dispatcher.get_result()
 
         result_dequeued_time = time.time()
         dispatch_latency = str(results[HEADER_METRICS_DISPATCH_LATENCY])

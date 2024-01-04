@@ -2,9 +2,11 @@
 import logging
 import os
 from typing import List, Tuple
+
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import *
+
 from ssf.package import get_package_name_and_tag
-from ssf.config import SSFConfig
-from ssf.results import *
 from ssf.deploy_paperspace import deploy as deploy_paperspace
 from ssf.deploy_gcore import deploy as deploy_gcore
 from ssf.version import SSF_DEPLOY_IMAGE
@@ -91,6 +93,29 @@ def get_container_options(
 
     if args.watchdog_ready_period:
         ssf_options.append(f"--watchdog-ready-period {args.watchdog_ready_period}")
+
+    if args.enable_cors_middleware:
+        ssf_options.append("--enable-cors-middleware")
+        ssf_options.append(f"--cors-allow-origin-regex {args.cors_allow_origin_regex}")
+        ssf_options.append(f"--cors-allow-credentials {args.cors_allow_credentials}")
+        ssf_options.append(f"--cors-allow-methods {args.cors_allow_methods}")
+        ssf_options.append(f"--cors-allow-headers {args.cors_allow_headers}")
+        ssf_options.append(f"--cors-expose-headers {args.cors_expose_headers}")
+        ssf_options.append(f"--cors-max-age {args.cors_max_age}")
+
+    if args.enable_ssl:
+        ssf_options.append("--enable-ssl")
+        ssf_options.append(f"--ssl-certificate-file {args.ssl_certificate_file}")
+        ssf_options.append(f"--ssl-key-file {args.ssl_key_file}")
+
+    if args.enable_session_authentication:
+        ssf_options.append("--enable-session-authentication")
+        ssf_options.append(
+            f"--session-authentication-timeout {args.session_authentication_timeout}"
+        )
+        ssf_options.append(
+            f"--session-authentication-module-file {args.session_authentication_module_file}"
+        )
 
     if args.deploy_custom_args:
         ssf_options.append(args.deploy_custom_args)

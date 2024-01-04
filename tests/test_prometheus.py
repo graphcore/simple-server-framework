@@ -4,9 +4,10 @@ from http import HTTPStatus
 import pytest
 import re
 import requests
-from ssf.common_runtime.common import HEADER_METRICS_REQUEST_LATENCY
+from ssf.application_interface.runtime_settings import HEADER_METRICS_REQUEST_LATENCY
+
 from ssf.grpc_runtime.test_utils_grpc import GRPCSession
-from ssf.utils import API_FASTAPI, API_GRPC
+from ssf.utils import API_GRPC
 import utils
 
 from pytest import server_port

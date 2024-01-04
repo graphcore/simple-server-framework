@@ -5,12 +5,15 @@ from dataclasses import dataclass
 from time import sleep
 from typing import Tuple
 
-from ssf.application import SSFApplicationInterface, SSFApplicationTestInterface
-from ssf.common_runtime.common import (
+from ssf.application_interface.application import (
+    SSFApplicationInterface,
+    SSFApplicationTestInterface,
+)
+from ssf.application_interface.runtime_settings import (
     HEADER_METRICS_DISPATCH_LATENCY,
     HEADER_METRICS_REQUEST_LATENCY,
 )
-from ssf.results import *
+from ssf.application_interface.results import *
 
 from my_application import MyApplication, MyApplicationTest
 

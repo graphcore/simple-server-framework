@@ -3,7 +3,7 @@ import os
 import pytest
 from pathlib import Path
 import utils
-from ssf.results import *
+from ssf.application_interface.results import *
 
 # TODO:
 # Add more Bash CLI tests
@@ -31,7 +31,7 @@ class TestBashCLI:
                 os.remove(f)
 
         result, stdout, stderr = utils.run_subprocess(
-            ["gc-ssf", "--config", bash_cli_config, "build"]
+            ["gc-ssf", "--config", bash_cli_config, "init", "build"]
             + (["--api", api] if api else [])
         )
 
@@ -61,6 +61,7 @@ class TestBashCLI:
                 "gc-ssf",
                 "--config",
                 os.path.join(ssf_dir_path_relative_to_altered, bash_cli_config),
+                "init",
                 "build",
             ]
             + (["--api", api] if api else []),

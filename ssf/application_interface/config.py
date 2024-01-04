@@ -1,4 +1,9 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+# NOTE:
+# Do not import external packages in application_interface modules
+# to avoid introducing additional dependencies for the application.
+# Only import SSF modules that are also in application_interface.
+
 from dataclasses import dataclass, field
 from typing import List, Dict
 from argparse import Namespace
@@ -48,6 +53,7 @@ class ApplicationDescription:
     terms_of_service: str = None
     # Application directory is the location of the config file
     dir: str = None
+    venv_dir: str = None
     # Application file is the location of the application module
     file: str = None
     file_dir: str = None
@@ -62,7 +68,7 @@ class ApplicationDescription:
     interface = None
     dependencies: Dict[str, str] = field(default_factory=lambda: {})
     artifacts: List[str] = field(default_factory=lambda: [])
-    startup_timeout: int = 300
+    startup_timeout: int = 600
 
 
 @dataclass

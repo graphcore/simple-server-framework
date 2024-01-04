@@ -1,5 +1,5 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 ID = "simple-server-framework"
 NAME = "Simple Server Framework"
 
@@ -7,7 +7,7 @@ NAME = "Simple Server Framework"
 # to the inclusive range of supported ssf-version or None if
 # there is no bound.
 MINIMUM_SUPPORTED_VERSION = "0.0.1"
-MAXIMUM_SUPPORTED_VERSION = "1.1.0"
+MAXIMUM_SUPPORTED_VERSION = "1.2.0"
 
 # The default baseimage used for packaging (container image) when
 # neither the application config nor the CLI arg --package-baseimage are available.

@@ -12,9 +12,8 @@
 import logging
 import os
 import signal
-from ssf.common_runtime.config import Settings
-
-from ssf.results import RESULT_APPLICATION_ERROR
+from ssf.application_interface.runtime_settings import Settings
+from ssf.application_interface.results import RESULT_APPLICATION_ERROR
 
 logger = logging.getLogger()
 

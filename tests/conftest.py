@@ -2,6 +2,11 @@
 import pytest
 from utils import print_header_separator
 
+# Use tests report_summary hooks to generate a pytest.tests.report.md
+from report_summary import *
+
+report_summary_set_name("pytest.tests.report.md")
+
 
 @pytest.fixture(scope="function", autouse=True)
 def test_log_bracket(request):

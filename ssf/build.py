@@ -1,46 +1,58 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
-import importlib
 import logging
+import subprocess
+from socket import socket
 import os
-import typing
+
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import *
+from ssf.application_interface.logger import get_log_queue
 
 from ssf.generate_endpoints import generate_endpoints
-from ssf.application import get_application, clear_application
-from ssf.utils import temporary_cwd, poplar_version_ok, get_poplar_requirement
-from ssf.results import *
-
-from .config import SSFConfig
-
+from ssf.app_venv import create_app_venv
+from ssf.utils import poplar_version_ok, get_poplar_requirement
+from ssf.utils import ReplicaManager
+from ssf.sdk_utils import maybe_activate_poplar_sdk
 
 logger = logging.getLogger("ssf")
 
 
 def build(ssf_config: SSFConfig):
     logger.info("> ==== Build ====")
-
-    if not poplar_version_ok(ssf_config):
+    env = maybe_activate_poplar_sdk(ssf_config)
+    if not poplar_version_ok(ssf_config, env):
         raise SSFExceptionUnmetRequirement(
             f"Missing or unsupported Poplar version - needs {get_poplar_requirement(ssf_config)}"
         )
 
-    logger.info("> Generate_endpoints")
+    logger.info("> Generate endpoints")
     generate_endpoints(ssf_config)
 
-    logger.info(f"> Load application")
+    logger.info(f"> Checking application venv")
+    create_app_venv(ssf_config)
 
-    application = get_application(ssf_config)
-    logger.info(f"instance={application}")
-
-    logger.info("> Build application")
-
-    # Where the user's application sources are.
-    app_file_dir = ssf_config.application.file_dir
-
-    # Run build from application module file directory
-    with temporary_cwd(app_file_dir):
-        ret = application.build()
-        application.shutdown()
-
-    clear_application(ssf_config)
-
+    log_queue = get_log_queue()
+    with socket() as s:
+        s.bind(("", 0))
+        # Get a free port from OS
+        port = s.getsockname()[1]
+        manager = ReplicaManager(address=("localhost", port), authkey=b"ssf")
+    manager.register(
+        "config", callable=lambda: {"ssf_config": ssf_config, "server_pid": os.getpid()}
+    )
+    manager.register("log_queue", callable=lambda: log_queue)
+    manager.start()
+    worker_pth = os.path.realpath(
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "application_interface/worker.py",
+        )
+    )
+    bin_path = os.path.join(ssf_config.application.venv_dir, "bin/python")
+    JUST_BUILD_APP = -1
+    builder_process = subprocess.Popen(
+        [bin_path, worker_pth, str(JUST_BUILD_APP), str(port)], env=env
+    )
+    builder_process.communicate()
+    ret = builder_process.returncode
     return ret

@@ -9,12 +9,14 @@ application:
   module: my_app.py
   ipus: 2
   trace: True
-  artifacts: [exe_cache/**/*]
+  artifacts: [exe_cache/*]
   dependencies:
-    python: git+https://github.com/huggingface/optimum-graphcore.git@97c11c3
+    python: --find-links https://download.pytorch.org/whl/cpu/torch_stable.html torch==2.0.1+cpu, optimum-graphcore==0.7.1, tokenizers==0.11.1, numpy==1.23.5
+    poplar: ["3.3.0"]
+    poplar_wheels: poptorch
 
   package:
-    inclusions: [exe_cache/**/*]
+    inclusions: [exe_cache/*]
     exclusions: []
     docker:
         baseimage: "graphcore/pytorch:latest"

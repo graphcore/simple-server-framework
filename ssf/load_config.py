@@ -6,16 +6,16 @@ from typing import List, Dict, Optional, Union
 from yaml import safe_load as yaml_safe_load
 from argparse import Namespace
 
-from ssf.version import PACKAGE_DEFAULT_BASEIMAGE
-from ssf.config import (
+from ssf.application_interface.config import (
     SSFConfig,
     ApplicationDescription,
     EndpointDescription,
     PackageDescription,
     EndpointParam,
 )
-from ssf.results import SSFExceptionApplicationConfigError
+from ssf.application_interface.results import SSFExceptionApplicationConfigError
 
+from ssf.version import PACKAGE_DEFAULT_BASEIMAGE
 from ssf.utils import get_endpoints_gen_module_path, set_dict
 
 logger = logging.getLogger("ssf")
@@ -217,12 +217,25 @@ class ConfigGenerator:
                 application.file_dir = os.path.dirname(
                     os.path.abspath(application.file)
                 )
+                application.venv_dir = os.path.join(
+                    os.getcwd(), f"ssf-{application.id}-venv"
+                )
 
             # Handle dependency types
             for i in application.dependencies:
-                if i not in ["python", "poplar"]:
+                if i not in ["python", "poplar", "poplar_wheels", "poplar_location"]:
                     logger.warning(
-                        "Only python, poplar dependencies are supported. Other packages will not be installed."
+                        "Only python, poplar, poplar_wheels and poplar_location dependencies are supported. Other packages will not be installed."
+                    )
+
+            if application.dependencies.get("poplar") is None:
+                if application.dependencies.get("poplar_wheels") is not None:
+                    raise SSFExceptionApplicationConfigError(
+                        f"application.dependencies.poplar_wheels requires application.dependencies.poplar to be set."
+                    )
+                if application.dependencies.get("poplar_location") is not None:
+                    raise SSFExceptionApplicationConfigError(
+                        f"application.dependencies.poplar_location requires application.dependencies.poplar to be set."
                     )
 
             # Keep interface as None - to be set later

@@ -2,11 +2,12 @@
 # --8<-- [start:imports]
 from optimum.graphcore import pipeline
 import logging
-from ssf.application import SSFApplicationInterface
-from ssf.utils import get_ipu_count
-from ssf.results import RESULT_OK, RESULT_APPLICATION_ERROR
+from ssf.application_interface.application import SSFApplicationInterface
+from ssf.application_interface.utils import get_ipu_count
+from ssf.application_interface.results import RESULT_OK, RESULT_APPLICATION_ERROR
 
 logger = logging.getLogger()
+
 # --8<-- [end:imports]
 
 # --8<-- [start:init]

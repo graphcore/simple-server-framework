@@ -7,16 +7,9 @@ application:
   desc: A very simple test API
   version: 1.0
   module: bash_cli.py
-  trace: True
-  artifacts: []
-
   dependencies:
-    python: ~
-
-  package:
-    inclusions: []
-    exclusions: []
-
+    python: requests
+  trace: True
   ipus: 0
   startup_timeout: 60
 

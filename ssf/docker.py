@@ -5,6 +5,19 @@ from typing import List
 from ssf.utils import logged_subprocess
 
 
+def logged_docker_command(label, args, file_output=None, environ=None):
+    error = None
+    try:
+        exit_code = logged_subprocess(
+            label, args, file_output=file_output, environ=environ
+        )
+        if exit_code:
+            error = f"Exit code {exit_code}"
+    except Exception as e:
+        error = f"Exception {e}"
+    return error
+
+
 def is_running(application_id: str, logger=None) -> bool:
     """Test if an application container is running
     :param application_id: container name
@@ -12,7 +25,7 @@ def is_running(application_id: str, logger=None) -> bool:
     :return: Returns True iff application_id is found and state is running
     """
     with tempfile.NamedTemporaryFile(mode="w+t") as output:
-        exit_code = logged_subprocess(
+        error = logged_docker_command(
             "is_running",
             [
                 "docker",
@@ -24,7 +37,9 @@ def is_running(application_id: str, logger=None) -> bool:
             ],
             file_output=output,
         )
-        if exit_code:
+        if error:
+            if logger:
+                logger.debug(f"Container {application_id} assumed not running {error}")
             return False
         output.seek(0)
         lines = output.readlines()
@@ -40,7 +55,7 @@ def is_stopped(application_id: str, logger=None) -> bool:
     :return: Returns True iff application_id is found and state is stopped
     """
     with tempfile.NamedTemporaryFile(mode="w+t") as output:
-        exit_code = logged_subprocess(
+        error = logged_docker_command(
             "is_stopped",
             [
                 "docker",
@@ -52,7 +67,9 @@ def is_stopped(application_id: str, logger=None) -> bool:
             ],
             file_output=output,
         )
-        if exit_code:
+        if error:
+            if logger:
+                logger.debug(f"Container {application_id} assumed not stopped {error}")
             return False
         output.seek(0)
         lines = output.readlines()
@@ -68,6 +85,7 @@ def start(
     ssf_options: str,
     docker_args: List[str] = [],
     logger=None,
+    env=None,
 ) -> bool:
     """Start an application container
     :param application_id: container name
@@ -91,27 +109,28 @@ def start(
 
     with tempfile.NamedTemporaryFile(mode="w+t") as start_output:
         if ipus > 0:
-            exit_code = logged_subprocess(
+            error = logged_docker_command(
                 "docker run",
                 ["gc-docker", "--", "-d"] + docker_args,
                 file_output=start_output,
+                environ=env,
             )
-            if exit_code:
+            if error:
                 if logger:
                     logger.error(
-                        f"gc-docker run for {application_id} {package_tag} errored ({exit_code})"
+                        f"gc-docker run for {application_id} {package_tag} errored ({error})"
                     )
                 return False
         else:
-            exit_code = logged_subprocess(
+            error = logged_docker_command(
                 "docker run",
                 ["docker", "run", "-d", "--network", "host"] + docker_args,
                 file_output=start_output,
             )
-            if exit_code:
+            if error:
                 if logger:
                     logger.error(
-                        f"docker run for {application_id} {package_tag} errored ({exit_code})"
+                        f"docker run for {application_id} {package_tag} errored ({error})"
                     )
                 return False
 
@@ -129,12 +148,12 @@ def remove(application_id: str, logger=None) -> bool:
     :return: Returns True unless there was a docker error
     """
     with tempfile.NamedTemporaryFile(mode="w+t") as output:
-        exit_code = logged_subprocess(
+        error = logged_docker_command(
             "docker rm", ["docker", "rm", "-f", application_id], file_output=output
         )
-        if exit_code:
+        if error:
             if logger:
-                logger.error(f"docker stop for {application_id} errored ({exit_code})")
+                logger.error(f"docker stop for {application_id} errored ({error})")
             return False
 
         output.seek(0)
@@ -151,12 +170,12 @@ def stop(application_id: str, logger=None) -> bool:
     :return: Returns True iff application was running and is succesfully stopped
     """
     with tempfile.NamedTemporaryFile(mode="w+t") as output:
-        exit_code = logged_subprocess(
+        error = logged_docker_command(
             "docker stop", ["docker", "stop", application_id], file_output=output
         )
-        if exit_code:
+        if error:
             if logger:
-                logger.error(f"docker stop for {application_id} errored ({exit_code})")
+                logger.error(f"docker stop for {application_id} errored ({error})")
             return False
 
         output.seek(0)
@@ -193,18 +212,16 @@ def wait_ready_from_logs(
         with tempfile.NamedTemporaryFile(mode="w+t") as log_output:
             # We can't tail this because we can't guarantee the application won't log something
             # after Uvicorn is ready.
-            exit_code = logged_subprocess(
+            error = logged_docker_command(
                 "docker logs",
                 ["docker", "logs", application_id],
                 stdout_log_level=None,
                 stderr_log_level=None,
                 file_output=log_output,
             )
-            if exit_code:
+            if error:
                 if logger:
-                    logger.error(
-                        f"docker logs for {application_id} errored ({exit_code})"
-                    )
+                    logger.error(f"docker logs for {application_id} errored ({error})")
                 return False
 
             log_output.seek(0)
@@ -233,8 +250,8 @@ def log(application_id: str, logger) -> bool:
     :return: Returns True iff container exists and logs are succesfully captured
     """
     with tempfile.NamedTemporaryFile(mode="w+t") as log_output:
-        exit_code = logged_subprocess("docker logs", ["docker", "logs", application_id])
-        if exit_code:
-            logger.error(f"docker logs for {application_id} errored ({exit_code})")
+        error = logged_docker_command("docker logs", ["docker", "logs", application_id])
+        if error:
+            logger.error(f"docker logs for {application_id} errored ({error})")
             return False
         return True

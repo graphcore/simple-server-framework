@@ -14,14 +14,17 @@ application:
   artifacts: []
 
   dependencies:
-    python: numpy==1.23.5, librosa==0.10.1, tokenizers==0.12.1, evaluate==0.4.0
+    python: numpy==1.23.5, fsspec==2023.1.0, wheel, librosa==0.10.1, tokenizers==0.12.1, evaluate==0.4.0, optimum-graphcore==0.7.1
     poplar: ["3.3.0"]
+    poplar_packages: poptorch
 
   package:
-    inclusions: ["./whisper_exe_cache/*","ft_interface.py","whisper_ft_utils.py", "pip_post_install.py"]
+    inclusions: ["./whisper_exe_cache/*","ft_interface.py","whisper_ft_utils.py"]
     exclusions: []
     docker:
-      baseimage: graphcore/pytorch:3.3.0-ubuntu-20.04
+      baseimage: graphcore/pytorch:3.3.0-ubuntu-20.04-20230703
+      run: |
+          RUN apt-get install -y libsndfile1
 
 endpoints:
 
@@ -32,7 +35,7 @@ endpoints:
       - id: task
         type: String
         desc: |
-          One the the following task {"dataset", "train", "eval", "test", "save", "status"}.
+          One of the following tasks {"dataset", "train", "eval", "test", "save", "status"}.
           (Not executed if status is "Busy")
 
           Usage:
@@ -40,7 +43,7 @@ endpoints:
             train : start finetuning job
             eval : start eval job
             test : test the model
-            save : upload model checkpoint to HF hub
+            save : upload model checkpoint to Hugging Face Hub
             status : return status string
 
       - id: parameters

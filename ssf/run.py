@@ -3,9 +3,11 @@ import logging
 import os
 import tempfile
 
+from ssf.application_interface.results import *
+
+from ssf.app_venv import create_app_venv
 from ssf.fastapi_runtime.ssf_run import run as ssf_run_fastapi
 from ssf.grpc_runtime.ssf_run import run as ssf_run_grpc
-from ssf.results import *
 from ssf.utils import (
     API_FASTAPI,
     API_GRPC,
@@ -14,7 +16,9 @@ from ssf.utils import (
     get_supported_apis,
     poplar_version_ok,
     object_to_ascii,
+    ipu_count_ok,
 )
+from ssf.sdk_utils import maybe_activate_poplar_sdk
 
 logger = logging.getLogger("ssf")
 
@@ -24,9 +28,14 @@ def run(ssf_config: dict):
 
     api = ssf_config.args.api
 
-    if not poplar_version_ok(ssf_config):
+    env = maybe_activate_poplar_sdk(ssf_config)
+    if not poplar_version_ok(ssf_config, env):
         raise SSFExceptionUnmetRequirement(
             f"Missing or unsupported Poplar version - needs {get_poplar_requirement(ssf_config)}"
+        )
+    if not ipu_count_ok(ssf_config, "run", env):
+        raise SSFExceptionUnmetRequirement(
+            f"IPUs count does not match application requirements."
         )
 
     supported = get_supported_apis()
@@ -46,6 +55,8 @@ def run(ssf_config: dict):
         logger.info(f"> Address {ipaddr}:{ssf_config.args.port}")
 
     result = RESULT_OK
+
+    create_app_venv(ssf_config)
 
     # Result file for server exit code.
     with tempfile.NamedTemporaryFile() as rf:

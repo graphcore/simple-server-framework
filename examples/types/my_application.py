@@ -4,9 +4,12 @@ import requests
 import os
 from typing import Tuple
 
-from ssf.application import SSFApplicationInterface, SSFApplicationTestInterface
-from ssf.results import *
-from ssf.utils import API_GRPC
+from ssf.application_interface.application import (
+    SSFApplicationInterface,
+    SSFApplicationTestInterface,
+)
+from ssf.application_interface.results import *
+from ssf.application_interface.utils import API_GRPC
 
 logger = logging.getLogger()
 

@@ -1,0 +1,30 @@
+# Copyright (c) 2023 Graphcore Ltd. All rights reserved.
+ssf_version: 1.0.0
+
+application:
+  id: simple-delayed
+  name: Simulate workload API
+  desc: Application that sends response with delay
+  version: 1.0
+  module: my_application.py
+  ipus: 0
+  trace: False
+
+endpoints:
+
+  - id: Test1
+    version: 1
+    desc: Endpoint that sends response with delay
+
+    inputs:
+
+      - id: x
+        type: Float
+        desc: Requested application sleep time in seconds
+        example: 0.5
+
+    outputs:
+
+      - id: requests
+        type: Integer
+        desc: Count of requests

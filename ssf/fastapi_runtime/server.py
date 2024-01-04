@@ -7,23 +7,24 @@ from threading import Thread
 
 import server_health
 import server_security
+import server_authentication
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from ssf.common_runtime.callbacks import notify_error_callback
 
-from ssf.common_runtime.config import settings
+from ssf.application_interface.runtime_settings import settings
 
-from ssf.common_runtime.dispatcher import Applications
+from ssf.common_runtime.dispatcher import Application
+from ssf.application_interface.logger import init_global_logging, stop_global_logging
 
 from ssf.fastapi_runtime.server_metrics import (
     RequestLatencyProviderMiddleware,
     add_prometheus_instrumentator,
 )
 
-from ssf.logger import init_global_logging
-from ssf.results import SSFExceptionFrameworkResourceError
-from ssf.utils import API_FASTAPI, load_module, ascii_to_object
+from ssf.application_interface.results import SSFExceptionFrameworkResourceError
+from ssf.utils import load_module, ascii_to_object
 
 init_global_logging()
 
@@ -53,9 +54,9 @@ logger.debug(f"ssf_config={ssf_config}")
 # Create the applications managed group.
 # A single application (=> single dispatcher) from our single ssf_config.
 logger.info(f"> Creating FastAPI applications")
-applications = Applications(
+applications = Application(
     settings=settings,
-    ssf_config_list=[ssf_config],
+    ssf_config=ssf_config,
     notify_error_callback=notify_error_callback,
 )
 logger.debug(f"applications={applications}")
@@ -106,6 +107,7 @@ async def _lifespan(app: FastAPI):
         else:
             logger.info("Lifespan stop : stop application")
             applications.stop()
+        stop_global_logging()
     except asyncio.CancelledError:
         pass
     except KeyboardInterrupt:
@@ -121,9 +123,13 @@ if application_license_name is not None:
         "url": application_license_url,
     }
 
+application_title = application_name
+if settings.api_key is None and not settings.enable_session_authentication:
+    application_title += " (unsecure)"
+
 app = FastAPI(
     lifespan=_lifespan,
-    title=(application_name + (" (unsecure)" if settings.api_key is None else "")),
+    title=application_title,
     description=application_desc,
     version=application_version,
     license_info=license_info,
@@ -144,15 +150,27 @@ logger.info(
 # app.add_middleware(TrustedHostMiddleware, allowed_hosts=["example.com", "*.example.com"])
 # app.add_middleware(HTTPSRedirectMiddleware)
 
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origin_regex=settings.allow_origin_regex,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"],
+logger.info(
+    f"CORS middleware is {'enabled' if settings.enable_cors_middleware else 'disabled'}."
 )
+if settings.enable_cors_middleware:
+    logger.info(
+        f"CORS middleware allow_origin_regex {settings.cors_allow_origin_regex}."
+    )
+    logger.info(f"CORS middleware allow_credentials {settings.cors_allow_credentials}.")
+    logger.info(f"CORS middleware allow_methods {settings.cors_allow_methods}.")
+    logger.info(f"CORS middleware allow_headers {settings.cors_allow_headers}.")
+    logger.info(f"CORS middleware expose_headers {settings.cors_expose_headers}.")
+    logger.info(f"CORS middleware max_age {settings.cors_max_age}.")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=settings.cors_allow_origin_regex,
+        allow_credentials=settings.cors_allow_credentials,
+        allow_methods=settings.cors_allow_methods,
+        allow_headers=settings.cors_allow_headers,
+        expose_headers=settings.cors_expose_headers,
+        max_age=settings.cors_max_age,
+    )
 
 app.add_middleware(RequestLatencyProviderMiddleware)
 
@@ -182,12 +200,23 @@ for endpoint in ssf_config.endpoints:
     endpoint_module = load_module(endpoint_file, module_id)
     app.include_router(endpoint_module.router)
 
-# Only include security module and endpoint when an API key has been specified.
-if settings.api_key is None:
-    logger.warning("API key has not been specified, endpoints are not secured.")
-else:
-    logger.info("> Adding security layer")
+# Only include API key security module and endpoint when an API key has been specified.
+if settings.api_key:
+    logger.info("> Adding API key security layer")
     app.include_router(server_security.router)
+else:
+    logger.warning(
+        "API key has not been specified, endpoints are not secured with API key."
+    )
+
+# Only include authentication module and endpoint when session authentication has been enabled.
+if settings.enable_session_authentication:
+    logger.info("> Adding authentication layer")
+    app.include_router(server_authentication.router)
+else:
+    logger.warning(
+        "Session authentication has not been specified, endpoints are not secured with authentication."
+    )
 
 # Initialize and include server health router
 server_health.initialize(applications)

@@ -2,9 +2,13 @@
 import logging
 from typing import List, Tuple
 
-from ssf.config import SSFConfig
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import (
+    RESULT_OK,
+    SSFExceptionGcoreDeploymentError,
+)
+
 from ssf.publish import docker_login_command, docker_logout_command
-from ssf.results import RESULT_OK, SSFExceptionGcoreDeploymentError
 from ssf.ssh import add_ssh_host
 from ssf.utils import logged_subprocess
 

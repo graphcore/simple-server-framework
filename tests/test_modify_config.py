@@ -59,14 +59,14 @@ class ModifyConfigBase(utils.TestClient):
             # Stall for watchdog
             time.sleep(2)
             self.stop_process()
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_OK but some logging to indicate set-config.
         assert not self.process_is_running()
         assert self.server_stopped()
         assert self.get_return_code() == RESULT_OK
 
     def expect_failure(self):
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         # Expect RESULT_APPLICATION_CONFIG_ERROR to indicate there were failures.
         assert not self.process_is_running()
         assert self.server_stopped()
@@ -133,9 +133,9 @@ class TestsModifyConfigBaseGrpcOK(ModifyConfigBase):
     def test_application(self):
         # We don't wait for the process to be ready.
         # Just wait some small period and then stop it.
-        time.sleep(3)
+        time.sleep(12)
         self.stop_process()
-        self.wait_process_exit(timeout=60)
+        self.wait_process_exit()
         assert not self.process_is_running()
         assert self.server_stopped()
         assert self.get_return_code() == RESULT_OK

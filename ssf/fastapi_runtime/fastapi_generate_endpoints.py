@@ -5,14 +5,16 @@ import os
 import typing
 from typing import Any
 
-from ssf.results import *
+from ssf.application_interface.config import SSFConfig, EndpointDescription
+from ssf.application_interface.results import *
+
+from ssf.fastapi_runtime.fastapi_types import handler, gen_output_type_mapping, handlers
+from ssf.utils import lookup_dict, API_FASTAPI
+from ssf.template import TemplateSymbolParser, expand_template
+
 
 logger = logging.getLogger("ssf")
 
-from ssf.fastapi_types import handler, gen_output_type_mapping, handlers
-from ssf.utils import lookup_dict, API_FASTAPI
-from ssf.template import TemplateSymbolParser, expand_template
-from ssf.config import SSFConfig, EndpointDescription
 
 API_INPUT_FORMATS = ["json", "query"]
 

@@ -18,6 +18,7 @@ application:
   dependencies:
     python: requirements.txt
     poplar: ["3.3.0"]
+    poplar_wheels: poptorch
 
   package:
     inclusions: ["./exe_cache/*"]

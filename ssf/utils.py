@@ -1,29 +1,27 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
-import contextlib
-import importlib.util
+
+from ssf.application_interface.utils import *
+
 import glob
 import logging
 import os
 import subprocess
 import sys
 import tempfile
+import multiprocessing as mp
 import pickle
 import base64
 
-from typing import List, Optional, Dict, Union
+from typing import List, Optional, Dict
 from threading import Thread
-from yaml import safe_load as yaml_safe_load
 
 from dataclasses import is_dataclass
-from ssf.config import SSFConfig
-from ssf.results import (
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import (
     SSFExceptionInternalError,
     SSFExceptionNetworkError,
-    SSFExceptionApplicationModuleError,
 )
-
-API_FASTAPI = "fastapi"
-API_GRPC = "grpc"
+from ssf.application_interface.utils import get_ipu_count
 
 logger = logging.getLogger("ssf")
 
@@ -233,7 +231,7 @@ def logged_subprocess(
         if file_output:
             file_output.write(line + "\n")
 
-    logger.debug(f"Creating process with {command_line_args}")
+    logger.debug(f"Creating process with {command_line_args} for [{tag}]")
     process = subprocess.Popen(
         command_line_args,
         stdout=subprocess.PIPE,
@@ -241,15 +239,14 @@ def logged_subprocess(
         stdin=subprocess.PIPE,
         env=os.environ.copy() if environ is None else environ,
     )
-    logger.debug(f"Created process {process.pid}")
+    logger.debug(f"Created process {process.pid} for [{tag}]")
 
     if piped_input:
-        logger.debug(f"Communicate piped input to {process.pid}")
         out, err = process.communicate(piped_input)
         logger.debug(f"Waiting for process result from {process.pid}")
         result = process.wait()
-        logger.debug(f"Process {process.pid} completed with result {result}")
-        logger.debug(f"Logging output for {process.pid}")
+        logger.debug(f"Process {process.pid} [{tag}] completed with result {result}")
+        logger.debug(f"Logging output for {process.pid} [{tag}]")
         for line in out.decode("utf-8").split("\n"):
             log_line(f"[{process.pid}] [{tag}]", line, stdout_log_level, file_output)
         for line in err.decode("utf-8").split("\n"):
@@ -257,13 +254,11 @@ def logged_subprocess(
     else:
 
         def reader(pipe, label, level, file_output):
-            logger.debug(f"{label} Enter reader for pipe {pipe}")
             for line in pipe:
                 try:
                     log_line(label, line.decode("utf-8").rstrip(), level, file_output)
                 except:
                     pass
-            logger.debug(f"{label} Leave reader for pipe {pipe}")
 
         logger.debug("Creating threaded readers")
         tout = Thread(
@@ -284,66 +279,42 @@ def logged_subprocess(
                 file_output,
             ],
         )
-        logger.debug("Starting threaded readers")
         tout.start()
         terr.start()
-        logger.debug(f"Waiting for process result from {process.pid}")
+        logger.debug(f"Waiting for process result from {process.pid} [{tag}]")
         result = process.wait()
-        logger.debug(f"Process {process.pid} completed with result {result}")
-        logger.debug("Joining threaded readers")
+        logger.debug(f"Process {process.pid} [{tag}] completed with result {result}")
         tout.join()
         terr.join()
-    logger.debug(f"Returning result {result}")
+    logger.debug(f"Returning result {result} from [{tag}]")
     return result
 
 
-def install_python_packages(python_packages: str) -> int:
+def install_python_packages(
+    python_packages: str, executable: str = sys.executable
+) -> int:
     ret = 0
-    logger.info(f"installing python packages {python_packages}")
+    logger.info(f"Installing python packages {python_packages}")
     for p in python_packages.split(","):
-        logger.debug(f"pip-installing package {p}")
+        extend = p.split(" ")
+        logger.debug(f"pip-installing package {extend}")
         ret = ret + logged_subprocess(
-            "pip", [sys.executable, "-m", "pip", "install", p]
+            "pip", [executable, "-m", "pip", "install"] + extend
         )
     return ret
 
 
-def install_python_requirements(python_requirements: str) -> int:
+def install_python_requirements(
+    python_requirements: str, executable: str = sys.executable
+) -> int:
     ret = 0
     logger.info(f"installing python requirements {python_requirements}")
     for r in python_requirements.split(","):
         logger.debug(f"pip-installing requirements {r}")
         ret = ret + logged_subprocess(
-            "pip", [sys.executable, "-m", "pip", "install", "-r", r]
+            "pip", [executable, "-m", "pip", "install", "-r", r]
         )
     return ret
-
-
-def load_module(module_file: str, module_name: str):
-    if not module_name in sys.modules:
-        logger.info(f"loading module {module_file} with module name {module_name}")
-        try:
-            spec = importlib.util.spec_from_file_location(module_name, module_file)
-            _module = importlib.util.module_from_spec(spec)
-            sys.modules[module_name] = _module
-            spec.loader.exec_module(_module)
-        except Exception as e:
-            raise SSFExceptionApplicationModuleError(
-                f"Failure loading {module_file}."
-            ) from e
-    return sys.modules[module_name]
-
-
-@contextlib.contextmanager
-def temporary_cwd(target_cwd: str):
-    orig_cwd = os.getcwd()
-    os.chdir(target_cwd)
-    try:
-        logger.debug(f"Temporary change directory to {target_cwd}")
-        yield
-    finally:
-        os.chdir(orig_cwd)
-        logger.debug(f"Temporary change directory reverted to {orig_cwd}")
 
 
 def build_file_list(
@@ -353,6 +324,7 @@ def build_file_list(
     always: List[str] = [],
     warn_on_empty_inclusions: bool = True,
     warn_on_empty_exclusions: bool = True,
+    glob_recursion=True,
 ):
     """
     Build a file list from src_dir.
@@ -374,6 +346,7 @@ def build_file_list(
         logger.debug(f"glob_inclusions={glob_inclusions}")
         logger.debug(f"glob_exclusions={glob_exclusions}")
         logger.debug(f"always={always}")
+        logger.debug(f"recursion {glob_recursion}")
 
         # Build complete include/exclude file list.
         files_include = []
@@ -381,7 +354,7 @@ def build_file_list(
         for g in glob_inclusions:
             found = [
                 os.path.abspath(f)
-                for f in glob.glob(g, recursive=True)
+                for f in glob.glob(g, recursive=glob_recursion)
                 if os.path.isfile(f)
             ]
             if len(found) == 0:
@@ -392,7 +365,7 @@ def build_file_list(
         for g in glob_exclusions:
             found = [
                 os.path.abspath(f)
-                for f in glob.glob(g, recursive=True)
+                for f in glob.glob(g, recursive=glob_recursion)
                 if os.path.isfile(f)
             ]
             if len(found) == 0:
@@ -464,9 +437,11 @@ def get_default_ipaddr():
         return ipaddr
 
 
-def get_poplar_version():
+def get_poplar_version(env):
     try:
-        result = subprocess.run(["gc-info", "--version"], stdout=subprocess.PIPE)
+        result = subprocess.run(
+            ["gc-info", "--version"], stdout=subprocess.PIPE, env=env
+        )
         if result.returncode == 0:
             output = result.stdout.decode("utf-8")
             # e.g. "Poplar version: 3.1.0"
@@ -480,10 +455,26 @@ def get_poplar_version():
 
 
 def get_poplar_requirement(ssf_config: SSFConfig) -> str:
-    try:
-        return ssf_config.application.dependencies["poplar"]
-    except:
-        return None
+    return ssf_config.application.dependencies.get("poplar", None)
+
+
+def get_python_requirements(ssf_config: SSFConfig) -> ([str], [str]):
+    python_dependencies = ssf_config.application.dependencies.get("python", None)
+    # We support 'requirements.txt' and/or packages as comma-separated list.
+    deps_requirement_files = []
+    deps_packages = []
+    if python_dependencies:
+        for d in python_dependencies.split(","):
+            d = d.strip()
+            if ".txt" in d:
+                deps_requirement_files.append(
+                    os.path.join(ssf_config.application.dir, d)
+                )
+            else:
+                deps_packages.append(d)
+    logger.debug(f"deps_requirement_files {deps_requirement_files}")
+    logger.debug(f"deps_packages {deps_packages}")
+    return deps_requirement_files, deps_packages
 
 
 def get_ipu_count_requirement(ssf_config: SSFConfig) -> int:
@@ -502,25 +493,13 @@ def get_ipu_count_requirement(ssf_config: SSFConfig) -> int:
         return None
 
 
-def get_ipu_count() -> int:
-    try:
-        result = subprocess.run(["gc-info", "--ipu-count"], stdout=subprocess.PIPE)
-        if result.returncode == 0:
-            output = result.stdout.decode("utf-8")
-            return int(output)
-    except:
-        pass
-    return 0
-
-
-def poplar_version_ok(ssf_config: SSFConfig) -> bool:
+def poplar_version_ok(ssf_config: SSFConfig, env: dict) -> bool:
     requirement = get_poplar_requirement(ssf_config)
     if not requirement:
         logger.debug("Application has no specific Poplar requirement")
         return True
 
-    current = get_poplar_version()
-
+    current = get_poplar_version(env)
     if current is not None:
         if current in requirement:
             logger.debug(f"Poplar '{current}' satisfies application with {requirement}")
@@ -530,15 +509,16 @@ def poplar_version_ok(ssf_config: SSFConfig) -> bool:
     return False
 
 
-def ipu_count_ok(ssf_config: SSFConfig, step_name: str) -> bool:
+def ipu_count_ok(ssf_config: SSFConfig, step_name: str, env: dict) -> bool:
     """Checks is system has required number of IPUs to perform given action.
 
     Args:
         ssf_config (SSFConfig): SSF config for application.
         action_name (str): name of the action (step) to be performed.
+        env: instance of os.environ in which to check
 
     Returns:
-        bool: True is IPU count requirements are met, False otherwise.
+        bool: True if IPU count requirements are met, False otherwise.
     """
 
     if step_name not in ["test", "run"]:
@@ -549,7 +529,7 @@ def ipu_count_ok(ssf_config: SSFConfig, step_name: str) -> bool:
         logger.debug("Application has no specific IPU requirement")
         return True
 
-    current = get_ipu_count()
+    current = get_ipu_count(env)
     if current >= requirement:
         logger.debug(f"IPUs {current} satisfies application with {requirement}")
         return True
@@ -565,7 +545,11 @@ def ipu_count_ok(ssf_config: SSFConfig, step_name: str) -> bool:
 
 def get_endpoints_gen_module_path(api_name):
     return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), f"generate_endpoints_{api_name}.py")
+        os.path.join(
+            os.path.dirname(__file__),
+            f"{api_name}_runtime",
+            f"{api_name}_generate_endpoints.py",
+        )
     )
 
 

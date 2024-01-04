@@ -9,12 +9,13 @@ application:
   module: mnist_ssf_app.py
   ipus: 1
   trace: True
-  artifacts: ["mnist_datasets_downloaded/**/*", "exe_cache/**/*"]
+  artifacts: ["mnist_datasets_downloaded/MNIST/raw/*", "exe_cache/*"]
   max_batch_size: 1
 
   dependencies:
     python: requirements.txt
     poplar: ["3.3.0"]
+    poplar_wheels: poptorch
 
   package:
     inclusions: ["mnist_datasets_downloaded/**/*", "exe_cache/**/*"]

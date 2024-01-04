@@ -2,12 +2,12 @@
 import logging
 import requests
 
-from ssf.application import (
+from ssf.application_interface.application import (
     SSFApplicationInterface,
     SSFApplicationTestInterface,
-    SSFConfig,
 )
-from ssf.results import *
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import *
 
 logger = logging.getLogger()
 

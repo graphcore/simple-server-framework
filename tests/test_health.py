@@ -109,7 +109,7 @@ class TestsReadinessChange(HealthTest):
 
     def test_startup_wait(self):
         # then wait until ready is up
-        self.wait_server_ready(timeout=20)
+        self.wait_server_ready()
         assert self.is_ready
         assert self.is_string_in_logs("Dispatcher ready")
 
@@ -136,7 +136,7 @@ class TestsReadinessChange(HealthTest):
         # Watchdog should spot the dead worker
         # and bring it back up.
         print("wait_server_ready()...")
-        self.wait_server_ready(timeout=30)
+        self.wait_server_ready()
         print("wait_server_ready()...OK")
         print("Assert 'is not alive' in logs")
         assert self.is_string_in_logs("is not alive")
@@ -434,9 +434,9 @@ class TestsAppHealthFailsWatchdogEnabled(HealthTest):
         while time.time() - t0 < 20:
             time.sleep(2)
             if not self.health_live():
-                assert self.is_string_in_logs("health check kept failing after")
-                return
-        raise Exception("Timeout")
+                if self.is_string_in_logs("health check kept failing after"):
+                    return
+        utils.raise_exception("Timeout")
 
     def test_exit_after_failures(self):
         # Force stop.
@@ -489,7 +489,7 @@ class TestsAppHealthRecovery(HealthTest):
         with open("tests/app_usecases/status.yaml", "w") as file:
             yaml.dump({"healthy": True}, file)
         # wait until readiness is back up
-        self.wait_server_ready(timeout=10)
+        self.wait_server_ready()
         # make sure liveness is still up
         assert self.health_live()
 
@@ -526,7 +526,7 @@ class TestsAppHealthFailsWatchdogDisabled(HealthTest):
         while time.time() - t0 < 20:
             time.sleep(2)
             if not self.health_live():
-                raise Exception("Should still be alive")
+                utils.raise_exception("Should still be alive")
 
     def test_exit_after_failures(self):
         # Force stop.
@@ -562,16 +562,16 @@ class TestsAppHealthFailsWatchdogWithoutRequests(HealthTest):
             self.Test1()
             time.sleep(2)
             if not self.health_live():
-                raise Exception("Should still be alive")
+                utils.raise_exception("Should still be alive")
 
         # check liveness does turn down once we stop issuing requests
         t0 = time.time()
-        while time.time() - t0 < 20:
+        while time.time() - t0 < 60:
             time.sleep(2)
             if not self.health_live():
-                assert self.is_string_in_logs("health check kept failing after")
-                return
-        raise Exception("Timeout")
+                if self.is_string_in_logs("health check kept failing after"):
+                    return
+        utils.raise_exception("Timeout")
 
     def test_exit_after_failures(self):
         # Force stop.

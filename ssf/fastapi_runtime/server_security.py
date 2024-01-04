@@ -7,7 +7,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 
 from secrets import compare_digest
 
-from ssf.common_runtime.config import settings
+from ssf.application_interface.runtime_settings import settings
 
 API_KEY_NAME = "api_key"
 

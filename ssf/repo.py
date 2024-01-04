@@ -5,9 +5,13 @@ import os
 import shutil
 import tempfile
 
+from ssf.application_interface.results import (
+    SSFExceptionGitRepoError,
+    SSFExceptionPaperspaceDeploymentError,
+)
+
 from ssf.ssh import add_ssh_host
 from ssf.utils import logged_subprocess, temporary_cwd
-from ssf.results import SSFExceptionGitRepoError, SSFExceptionPaperspaceDeploymentError
 
 logger = logging.getLogger()
 

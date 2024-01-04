@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 import grpc
 import requests
 
-from ssf.common_runtime.common import (
+from ssf.application_interface.runtime_settings import (
     HEADER_METRICS_DISPATCH_LATENCY,
     HEADER_METRICS_REQUEST_LATENCY,
 )
@@ -28,12 +28,15 @@ class GRPCNotImplementedError(NotImplementedError):
 
 
 class GRPCSession:
-    def __init__(self, address, port, api_key=None) -> None:
+    def __init__(self, address, port, api_key=None, intercept_channel=None) -> None:
         self.proto_predict_v2 = grpc_predict_v2_pb2
         self.proto_predict_v2_grpc = grpc_predict_v2_pb2_grpc
         self.api_key = None
 
         self.channel = grpc.insecure_channel(_SERVER_ADDR_TEMPLATE % (address, port))
+        if intercept_channel:
+            self.channel = grpc.intercept_channel(self.channel, intercept_channel)
+
         self.stub = self.proto_predict_v2_grpc.GRPCInferenceServiceStub(self.channel)
 
     def gen_inputs_from_json(self, json):

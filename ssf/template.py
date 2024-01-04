@@ -7,10 +7,11 @@ from typing import Any, List
 
 logger = logging.getLogger("ssf")
 
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import SSFExceptionInternalError
+
 from ssf.utils import lookup_dict
 from ssf.version import VERSION
-from ssf.config import SSFConfig
-from ssf.results import SSFExceptionInternalError
 
 
 class TemplateSymbolParser(ABC):

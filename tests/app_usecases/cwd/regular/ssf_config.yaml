@@ -11,7 +11,7 @@ application:
   artifacts: ["generated/*"]
 
   dependencies:
-    python: ~
+    python: requests
 
   package:
     inclusions: ["generated/*"]

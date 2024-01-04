@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Graphcore Ltd. All rights reserved.
 import logging
-from ssf.application import SSFApplicationInterface
-from ssf.results import RESULT_OK
+from ssf.application_interface.application import SSFApplicationInterface
+from ssf.application_interface.results import RESULT_OK
 from typing import Any
 import threading as th
 import multiprocessing as mp

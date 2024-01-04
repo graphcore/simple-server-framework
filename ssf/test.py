@@ -3,8 +3,13 @@ import atexit
 import logging
 import requests
 import time
+import os
 
-from ssf.application import get_application_test
+from ssf.application_interface.config import SSFConfig
+from ssf.application_interface.results import *
+from ssf.application_interface.application import get_application_test
+
+from ssf.app_venv import create_app_venv
 from ssf.package import get_package_name_and_tag
 from ssf.utils import (
     API_FASTAPI,
@@ -14,22 +19,25 @@ from ssf.utils import (
     get_poplar_requirement,
     temporary_cwd,
     get_ipu_count_requirement,
+    ipu_count_ok,
 )
 import ssf.docker as docker
-from ssf.config import SSFConfig
-from ssf.results import *
 from ssf.grpc_runtime.test_utils_grpc import GRPCSession
-
+from ssf.sdk_utils import maybe_activate_poplar_sdk
 
 logger = logging.getLogger("ssf")
 
 
 def test(ssf_config: SSFConfig):
     logger.info("> ==== Test ====")
-
-    if not poplar_version_ok(ssf_config):
+    env = maybe_activate_poplar_sdk(ssf_config)
+    if not poplar_version_ok(ssf_config, env):
         raise SSFExceptionUnmetRequirement(
             f"Missing or unsupported Poplar version - needs {get_poplar_requirement(ssf_config)}"
+        )
+    if not ipu_count_ok(ssf_config, "test", env):
+        raise SSFExceptionUnmetRequirement(
+            f"IPUs count does not match application requirements."
         )
 
     # TODO:
@@ -66,15 +74,18 @@ def test(ssf_config: SSFConfig):
     IPADDR = f"{HOST}:{PORT}"
 
     def subtest_check_server_ready(session, startup_timeout):
-        WAIT_PERIOD = 5
-        INFO_PERIOD = 60
+        WAIT_PERIOD = 20
+        INFO_PERIOD = 120
 
         start = time.time()
         last_info = start
 
         MAGIC1 = 200
+
+        logger.info(f"Waiting for server ready (timeout {startup_timeout}s)")
+        time.sleep(WAIT_PERIOD / 4)
+
         while True:
-            time.sleep(WAIT_PERIOD)
 
             if not docker.is_running(name):
                 if logger:
@@ -88,6 +99,9 @@ def test(ssf_config: SSFConfig):
                     return True
             except:
                 pass
+
+            time.sleep(WAIT_PERIOD)
+
             now = time.time()
             elapsed = now - start
 
@@ -97,7 +111,9 @@ def test(ssf_config: SSFConfig):
 
             if (now - last_info) > INFO_PERIOD:
                 if logger:
-                    logger.info(f"Still waiting for server ready ({elapsed}s)")
+                    logger.info(
+                        f"Still waiting for server ready ({int(elapsed)}/{startup_timeout}s)"
+                    )
                 last_info = now
 
     def subtest_check_root_endpoint(session) -> bool:
@@ -187,6 +203,7 @@ def test(ssf_config: SSFConfig):
             ipus=get_ipu_count_requirement(ssf_config),
             ssf_options=f"-p {PORT} --key {API_KEY} --api {ssf_config.args.api}",
             logger=logger,
+            env=env,
         ):
             raise SSFExceptionDockerStatusError(f"Failed Start")
 
@@ -278,10 +295,12 @@ def test(ssf_config: SSFConfig):
         ko()
         logger.error("Failed subtest_check_security_accepted")
 
+    logger.info(f"Checking application venv")
+    create_app_venv(ssf_config)
+
     application_test = get_application_test(ssf_config)
     if application_test:
         logger.info("> Running application tests")
-
         app_file_dir = ssf_config.application.file_dir
         logging.info(f"Running application test from {app_file_dir}")
         with temporary_cwd(app_file_dir):
