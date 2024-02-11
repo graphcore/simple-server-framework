@@ -17,7 +17,7 @@ dependencies = [
   "typing-extensions==4.6.2",
   "requests==2.31.0",
   "wheel==0.38.1",
-  "grpcio==1.54.0",
+  "grpcio==1.54.3",
   "grpcio-tools==1.54.0",
   "grpcio-reflection==1.54.0"
 ]
